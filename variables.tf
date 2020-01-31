@@ -10,9 +10,25 @@
 #   This is where you customize your cluster
 # ==============================================================================
 
+# MANUAL: Grant admin consent manually in the Azure portal for the generated
+# aad applications, before setting this to 'true'. Example:
+#   - <prefix>-RBAC-Server
+#   - <prefix>-RBAC-Client
+#   - <prefix>-RBAC-Self
+variable "initialized" {
+  description = "[MANUAL] 'Admin Concent' granted for applications in Azure"
+  default = false
+}
+
 variable "cluster_type" {
-  description = "The type of cluster you want to deploy"
+  description = "The type of cluster you want to deploy (basic/advanced)"
   default     = "basic"
+
+  # Experimental
+  #validation {
+  #  condition     = contains(["basic","advanced"], var.cluster_type)
+  #  error_message = "Valid options are [basic, advanced]."
+  #}
 }
 
 variable "resource_group_name" {
@@ -37,17 +53,52 @@ variable "k8s_version" {
 
 # ------------------------------------------------------------------------------
 
-variable "appid_server" { default = "" }
-variable "appid_client" { default = "" }
-variable "appid_self"   { default = "" }
+variable "appid_server" {
+  description = ""
+  default     = ""
+}
 
-variable "spid_server" { default = "" }
-variable "spid_client" { default = "" }
-variable "spid_self"   { default = "" }
+variable "appid_client" {
+  description = ""
+  default     = ""
+}
 
-variable "spid_server_secret" { default = "" }
-variable "spid_client_secret" { default = "" }
-variable "spid_self_secret"   { default = "" }
+variable "appid_self" {
+  description = ""
+  default     = ""
+}
+
+variable "spid_server" {
+  description = ""
+  default     = ""
+}
+
+variable "spid_client" {
+  description = ""
+  default     = ""
+}
+
+variable "spid_self" {
+  description = ""
+  default     = ""
+}
+
+variable "spid_server_secret" {
+  description = ""
+  default     = ""
+}
+
+variable "spid_client_secret" {
+  description = ""
+  default     = ""
+}
+
+variable "spid_self_secret" {
+  description = ""
+  default     = ""
+}
+
+# ------------------------------------------------------------------------------
 
 variable "admin_username" {
   description = "The Local Administrator for the AKS cluster"
@@ -80,26 +131,21 @@ variable "use_log_analytics" {
 
 # ------------------------------------------------------------------------------
 
-variable "use_aad_rbac" {
-  description = "Configure RBAC for AAD integration"
-  default     = false
-}
-
-# MANUAL: Grant admin consent manually in the Azure portal for the generated
-# aad applications, before setting this to 'true':
-#   - <prefix>-RBAC-Server
-#   - <prefix>-RBAC-Client
-#   - <prefix>-RBAC-Self
-variable "aad_rbac_initialized" {
-  description = "Version of kubernetes to deploy"
-  default     = false
-}
-
-# ------------------------------------------------------------------------------
-
 # Configure network profile (advanced networking)
 # See https://github.com/Azure/azure-container-networking/blob/master/docs/cni.md
 variable "use_azure_cni" {
   description = "Configure Azure network plugin (cni)"
   default     = false
+}
+
+# ------------------------------------------------------------------------------
+
+variable "configure_k8s_roles" {
+  description = "Configure cluster roles"
+  default     = false
+}
+
+variable "aad_k8s_admin_group" {
+  description = "k8s administrator group in azure aad"
+  default     = "00000000-0000-0000-0000-000000000000"
 }

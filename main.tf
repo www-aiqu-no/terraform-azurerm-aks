@@ -23,7 +23,7 @@ module "service_principals_basic" {
 
 module "aks_basic" {
   source              = "./modules/aks-basic"
-  enabled             = var.cluster_type == "basic" ? true : false
+  enabled             = var.initialized && (var.cluster_type == "basic") ? true : false
   prefix              = var.prefix
   location            = var.location
   resource_group_name = var.resource_group_name != "" ? var.resource_group_name : module.resource_group.name
@@ -45,7 +45,7 @@ module "service_principals_rbac" {
 
 module "aks_advanced" {
   source              = "./modules/aks-advanced"
-  enabled             = var.cluster_type == "advanced" ? true : false
+  enabled             = var.initialized && (var.cluster_type == "advanced") ? true : false
   prefix              = var.prefix
   location            = var.location
   resource_group_name = var.resource_group_name != "" ? var.resource_group_name : module.resource_group.name
@@ -55,4 +55,18 @@ module "aks_advanced" {
   appid_self          = var.appid_self          != "" ? var.appid_self          : module.service_principals_rbac.appid_self
   spid_server_secret  = var.spid_server_secret  != "" ? var.spid_server_secret  : module.service_principals_rbac.spid_server_secret
   spid_self_secret    = var.spid_self_secret    != "" ? var.spid_self_secret    : module.service_principals_rbac.spid_self_secret
+}
+
+# ==============================================================================
+#  Cluster Configuration
+# ==============================================================================
+
+# Note that this sub-module requires the tf-executor to have the following
+# permission(s) in azure ad:
+#   - "Microsoft.Authorization/roleAssignments/*"
+module "k8s_role_bindings" {
+  source      = "./modules/k8s-role-bindings"
+  enabled     = var.configure_k8s_roles
+  prefix      = var.prefix
+  admin_group = var.aad_k8s_admin_group
 }

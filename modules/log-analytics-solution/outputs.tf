@@ -1,3 +1,3 @@
 output "id" {
-  value = azurerm_log_analytics_solution.main.id
+  value = var.enabled ? azurerm_log_analytics_solution.main.id : ""
 }

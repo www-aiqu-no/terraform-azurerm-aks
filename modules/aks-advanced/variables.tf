@@ -1,9 +1,8 @@
 # ==============================================================================
 #   REQUIRED (from parent module)
 # ==============================================================================
-
 variable "enabled" {
-  description = "The prefix for the resources created in the specified Azure Resource Group."
+  description = "Are we using this module?"
 }
 
 variable "prefix" {

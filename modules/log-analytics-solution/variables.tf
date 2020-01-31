@@ -1,6 +1,10 @@
 # ==============================================================================
 #   REQUIRED (passed from main module)
 # ==============================================================================
+variable "enabled" {
+  description = "Are we using this module?"
+}
+
 variable "resource_group_name" {
   description = "The name of the Resource Group in which the Log Analytics solution will be created"
 }

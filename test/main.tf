@@ -17,16 +17,6 @@ provider "random"     { version = "~> 2.2"  }
 provider "local"      { version = "~> 1.4"  }
 provider "tls"        { version = "~> 2.1"  }
 
-provider "kubernetes" {
-  version                = "~> 1.10"
-  host                   = module.testing.kube_config.0.host
-  username               = module.testing.kube_config.0.username
-  password               = module.testing.kube_config.0.password
-  client_certificate     = base64decode(module.testing.kube_config.0.client_certificate)
-  client_key             = base64decode(module.testing.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(module.testing.kube_config.0.cluster_ca_certificate)
-}
-
 # ==============================================================================
 #   Modules Settings
 # ==============================================================================
@@ -42,4 +32,14 @@ module "testing" {
   prefix       = random_string.prefix.result
   cluster_type = "advanced"
   initialized  = false
+}
+
+provider "kubernetes" {
+  version                = "~> 1.10"
+  host                   = module.testing.kube_config.0.host
+  username               = module.testing.kube_config.0.username
+  password               = module.testing.kube_config.0.password
+  client_certificate     = base64decode(module.testing.kube_config.0.client_certificate)
+  client_key             = base64decode(module.testing.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(module.testing.kube_config.0.cluster_ca_certificate)
 }

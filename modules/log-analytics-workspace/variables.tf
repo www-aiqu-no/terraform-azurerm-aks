@@ -1,6 +1,10 @@
 # ==============================================================================
 #   REQUIRED (passed from main module)
 # ==============================================================================
+variable "enabled" {
+  description = "Are we using this module?"
+}
+
 variable "prefix" {
   description = "The prefix for the resources created in the specified Azure Resource Group."
 }

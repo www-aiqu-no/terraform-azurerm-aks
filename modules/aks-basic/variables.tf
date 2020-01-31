@@ -1,9 +1,8 @@
 # ==============================================================================
 #   REQUIRED (from parent module)
 # ==============================================================================
-
 variable "enabled" {
-  description = "Are you deploying a Basic Cluster?"
+  description = "Are we using this module?"
 }
 
 variable "prefix" {

@@ -33,7 +33,7 @@ variable "cluster_type" {
 
 variable "resource_group_name" {
   description = "Resource group to create resources in. No value will create a new resource group"
-  default     = ""
+  default     = "AksResources"
 }
 
 variable "prefix" {
@@ -41,9 +41,10 @@ variable "prefix" {
   default     = "aks"
 }
 
+# Get list: az account list-locations --output table
 variable "location" {
   description = "Datacenter location for this deployment"
-  default     = ""
+  default     = "eastus"
 }
 
 variable "k8s_version" {

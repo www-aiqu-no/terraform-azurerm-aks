@@ -16,9 +16,9 @@ module "ssh_keys" {
 # ==============================================================================
 
 module "service_principals_basic" {
-  source  = "./modules/aad-basic"
-  enabled = (var.appid_client != "") && (var.cluster_type == "basic") ? false : true
-  prefix  = var.prefix
+  source   = "./modules/aad-basic"
+  enabled  = (var.appid_client != "") && (var.cluster_type == "basic") ? false : true
+  prefix   = var.prefix
 }
 
 module "aks_basic" {
@@ -66,7 +66,7 @@ module "aks_advanced" {
 #   - "Microsoft.Authorization/roleAssignments/*"
 module "k8s_role_bindings" {
   source      = "./modules/k8s-role-bindings"
-  enabled     = var.configure_k8s_roles
+  enabled     = var.initialized && var.configure_k8s_roles
   prefix      = var.prefix
   admin_group = var.aad_k8s_admin_group
 }

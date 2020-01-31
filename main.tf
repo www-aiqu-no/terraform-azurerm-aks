@@ -2,6 +2,7 @@ module "resource_group" {
   source   = "./modules/resource-group"
   enabled  = var.resource_group_name != "" ? false : true
   prefix   = var.prefix
+  name     = var.resource_group_name
   location = var.location
 }
 

@@ -13,7 +13,7 @@ variable "location" {
   description = "Where to create the resource group"
 }
 
-variable "resource_group_name" {
+variable "name" {
   description = "Name of the resource group to use"
 }
 

@@ -22,4 +22,4 @@ variable "pool_vm_disk_size"   { description = "See parent module" }
 variable "appid_server"        { description = "See parent module" }
 variable "appid_client"        { description = "See parent module" }
 variable "spid_server_secret"  { description = "See parent module" }
-variable "spid_self_secret"    { description = "See parent module" }
+variable "spid_client_secret"  { description = "See parent module" }

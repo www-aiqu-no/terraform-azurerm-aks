@@ -60,9 +60,9 @@ module "aks_advanced" {
   location            = var.location
   resource_group_name = var.resource_group_override != "" ? var.resource_group_override : module.resource_group.name
   appid_server        = var.appid_server            != "" ? var.appid_server            : module.service_principals_rbac.appid_server
-  appid_client        = var.appid_client            != "" ? var.appid_client            : module.service_principals_rbac.appid_rbac_client
+  appid_client        = var.appid_client            != "" ? var.appid_client            : module.service_principals_rbac.appid_client
   spid_server_secret  = var.spid_server_secret      != "" ? var.spid_server_secret      : module.service_principals_rbac.spid_server_secret
-  spid_self_secret    = var.spid_self_secret        != "" ? var.spid_self_secret        : module.service_principals_rbac.spid_self_secret
+  spid_client_secret  = var.spid_client_secret      != "" ? var.spid_client_secret      : module.service_principals_rbac.spid_client_secret
   ssh_public_key      = var.ssh_public_key          != "" ? var.ssh_public_key          : module.ssh_keys.public_ssh_key
   admin_user          = var.admin_user
   k8s_version         = var.k8s_version

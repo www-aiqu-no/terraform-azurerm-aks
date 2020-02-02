@@ -1,9 +1,10 @@
 #
 # See https://docs.microsoft.com/en-us/azure/aks/azure-ad-integration?view=azure-cli-latest
+
 # This is the aad aks application
 resource "azuread_application" "aks" {
   count = var.enabled ? 1 : 0
-  name = "${var.prefix}-aks"
+  name  = "${var.prefix}-aks"
 
   type                    = "webapp/api"
   reply_urls              = ["https://www.kred.no"]
@@ -44,14 +45,43 @@ resource "azuread_application" "aks" {
   }
 }
 
-# This is the rbac API endpoint for users
-resource "azuread_application" "rbac" {
+# Service principal ('permission group') for users
+resource "azuread_service_principal" "aks" {
   count = var.enabled ? 1 : 0
-  name = "${var.prefix}-aks-rbac"
+  application_id = azuread_application.aks[0].application_id
+}
 
-  reply_urls              = ["https://www.kred.no"]
-  type                    = "native"
-  group_membership_claims = "All"
+# Access Credentials to SP
+resource "azuread_service_principal_password" "aks" {
+  count = var.enabled ? 1 : 0
+  service_principal_id = azuread_service_principal.aks[0].id
+  value                = random_string.aks_password[0].result
+  end_date             = timeadd(timestamp(), "876000h") # 100 years
+
+  lifecycle {
+    ignore_changes = [end_date]
+  }
+}
+
+resource "random_string" "aks_password" {
+  count = var.enabled ? 1 : 0
+  length  = 16
+  special = true
+
+  keepers = {
+    service_principal = azuread_service_principal.aks[0].id
+  }
+}
+
+# ------------------------------------------------------------------------------
+
+# This is the rbac API endpoint for rbac-users
+resource "azuread_application" "rbac_client" {
+  count = var.enabled ? 1 : 0
+  name = "${var.prefix}-rbac"
+
+  reply_urls = ["https://www.kred.no"]
+  type       = "native"
 
   # Windows Azure Active Directory API
   required_resource_access {
@@ -76,52 +106,12 @@ resource "azuread_application" "rbac" {
   }
 }
 
-# ------------------------------------------------------------------------------
-
-# Here we define the service principals ('permissions') for users
-resource "azuread_service_principal" "aks" {
-  count = var.enabled ? 1 : 0
-  application_id = azuread_application.aks[0].application_id
-}
-
 resource "azuread_service_principal" "rbac_client" {
   count = var.enabled ? 1 : 0
-  application_id = azuread_application.rbac[0].application_id
+  application_id = azuread_application.rbac_client[0].application_id
 }
 
-# ------------------------------------------------------------------------------
-
-# Here we create access credentials
-
-# See https://www.terraform.io/docs/configuration/resources.html#lifecycle-lifecycle-customizations
-#   The end date will change at each run (terraform apply), causing a new password to
-#   be set. So we ignore changes on this field in the resource lifecyle to avoid this
-#   behaviour.
-#
-#   If the desired behaviour is to change the end date, then the resource must be
-#   manually tainted.
-resource "azuread_service_principal_password" "aks" {
-  count = var.enabled ? 1 : 0
-  service_principal_id = azuread_service_principal.aks[0].id
-  value                = random_string.aks_password[0].result
-  end_date             = timeadd(timestamp(), "876000h") # 100 years
-
-  lifecycle {
-    ignore_changes = [end_date]
-  }
-}
-
-#resource "azuread_service_principal_password" "rbac_clients" {
-#  count = var.enabled ? 1 : 0
-#  service_principal_id = azuread_service_principal.rbac_client[0].id
-#  value                = random_string.rbac_client_password[0].result
-#  end_date             = timeadd(timestamp(), "876000h") # 100 years
-#
-#  lifecycle {
-#    ignore_changes = [end_date]
-#  }
-#}
-
+# Cluster credentials
 resource "azuread_service_principal_password" "self" {
   count = var.enabled ? 1 : 0
   service_principal_id = azuread_service_principal.rbac_client[0].id
@@ -130,30 +120,6 @@ resource "azuread_service_principal_password" "self" {
 
   lifecycle {
     ignore_changes = [end_date]
-  }
-}
-
-# ------------------------------------------------------------------------------
-
-# See https://www.terraform.io/docs/providers/random/r/string.html#keepers
-#   Generate new id if sp changes
-resource "random_string" "aks_password" {
-  count = var.enabled ? 1 : 0
-  length  = 16
-  special = true
-
-  keepers = {
-    service_principal = azuread_service_principal.aks[0].id
-  }
-}
-
-resource "random_string" "rbac_client_password" {
-  count = var.enabled ? 1 : 0
-  length  = 16
-  special = true
-
-  keepers = {
-    service_principal = azuread_service_principal.rbac_client[0].id
   }
 }
 
@@ -166,3 +132,16 @@ resource "random_string" "rbac_self_password" {
     service_principal = azuread_service_principal.rbac_client[0].id
   }
 }
+
+# ------------------------------------------------------------------------------
+
+# See https://www.terraform.io/docs/configuration/resources.html#lifecycle-lifecycle-customizations
+#   The end date will change at each run (terraform apply), causing a new password to
+#   be set. So we ignore changes on this field in the resource lifecyle to avoid this
+#   behaviour.
+#
+#   If the desired behaviour is to change the end date, then the resource must be
+#   manually tainted.
+
+# See https://www.terraform.io/docs/providers/random/r/string.html#keepers
+#   Generate new id if sp changes

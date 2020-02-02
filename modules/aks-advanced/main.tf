@@ -39,11 +39,11 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   service_principal {
     client_id     = var.appid_client
-    client_secret = var.spid_self_secret
+    client_secret = var.spid_client_secret
   }
 
   role_based_access_control {
-    enabled = false
+    enabled = true
 
     # Pre-Generated credentials
     azure_active_directory {

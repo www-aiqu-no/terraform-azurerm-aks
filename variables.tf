@@ -5,8 +5,9 @@
 #   - This is where you customize your cluster
 # ==============================================================================
 
+# NOTE: Setting this back to 'false' after deploying your cluster will DESTROY resources on apply
 variable "initialized" {
-  description = "[MANUAL] 'Admin Concent' granted for applications in Azure"
+  description = "[MANUAL] 'Admin Consent' granted for applications in Azure."
   default     = false
 }
 
@@ -17,7 +18,7 @@ variable "cluster_type" {
   # Experimental
   #validation {
   #  condition     = contains(["basic","advanced"], var.cluster_type)
-  #  error_message = "Valid options are [basic, advanced]."
+  #  error_message = "Valid options are 'basic' and 'advanced'."
   #}
 }
 
@@ -111,21 +112,6 @@ variable "appid_client" {
   default     = ""
 }
 
-#variable "spid_server" {
-#  description = "Service principal for managing the server application"
-#  default     = ""
-#}
-
-#variable "spid_client" {
-#  description = "Service principal for clients"
-#  default     = ""
-#}
-
-#variable "spid_self" {
-#  description = "Service principal for cluster"
-#  default     = ""
-#}
-
 variable "spid_server_secret" {
   description = "Credentials for accessing k8s application (server)"
   default     = ""
@@ -136,10 +122,10 @@ variable "spid_client_secret" {
   default     = ""
 }
 
-variable "spid_self_secret" {
-  description = "Credentials for accessing k8s application (cluster)"
-  default     = ""
-}
+#variable "spid_self_secret" {
+#  description = "Credentials for accessing k8s application (cluster)"
+#  default     = ""
+#}
 
 # ------------------------------------------------------------------------------
 

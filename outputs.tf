@@ -1,5 +1,6 @@
 output "info" {
-  value = <<-EOH
+  description = "Information about working with the cluster"
+  value       = <<-EOH
     # To access kubectl on cluster as admin (e.g. to add rbac access):
     $ az aks get-credentials --resource-group <resource-group> --name <cluster-name> --admin
     $ kubectl apply -f rbac-aad-group.yaml
@@ -20,5 +21,7 @@ output "info" {
 #}
 
 output "kube_config" {
-  value = var.cluster_type == "basic" ? module.aks_basic[0].kube_config : module.aks_advanced[0].kube_config
+  description = "Cluster credentials"
+  value       = var.cluster_type == "basic" ? module.aks_basic[0].kube_config : module.aks_advanced[0].kube_config
+  sensitive   = true
 }

@@ -41,6 +41,7 @@ module "aks_basic" {
   pool_vm_count         = var.pool_vm_count
   pool_auto_scaling     = var.pool_auto_scaling
   log_analytics_enabled = var.log_analytics_enabled
+  log_analytics_workspace_id = module.log_analytics_workspace.id
 }
 
 # ==============================================================================
@@ -76,6 +77,7 @@ module "aks_advanced" {
   pool_vm_count         = var.pool_vm_count
   pool_auto_scaling     = var.pool_auto_scaling
   log_analytics_enabled = var.log_analytics_enabled
+  log_analytics_workspace_id = module.log_analytics_workspace.id
 }
 
 # ==============================================================================

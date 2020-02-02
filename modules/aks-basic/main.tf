@@ -43,7 +43,8 @@ resource "azurerm_kubernetes_cluster" "main" {
       enabled = true
     }
     oms_agent {
-      enabled = var.log_analytics_enabled
+      enabled                    = var.log_analytics_enabled
+      log_analytics_workspace_id = var.log_analytics_workspace_id
     }
     # See https://docs.microsoft.com/en-us/azure/aks/http-application-routing
     http_application_routing {

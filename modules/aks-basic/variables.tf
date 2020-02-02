@@ -22,4 +22,5 @@ variable "pool_vm_disk_size" { description = "See parent module" }
 variable "client_id"     { description = "See parent module" }
 variable "client_secret" { description = "See parent module" }
 # --
-variable "log_analytics_enabled" { description = "See parent module" }
+variable "log_analytics_enabled"      { description = "See parent module" }
+variable "log_analytics_workspace_id" { description = "See parent module" }

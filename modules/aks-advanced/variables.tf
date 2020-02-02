@@ -24,4 +24,5 @@ variable "appid_client"       { description = "See parent module" }
 variable "spid_server_secret" { description = "See parent module" }
 variable "spid_client_secret" { description = "See parent module" }
 # --
-variable "log_analytics_enabled" { description = "See parent module" }
+variable "log_analytics_enabled"      { description = "See parent module" }
+variable "log_analytics_workspace_id" { description = "See parent module" }

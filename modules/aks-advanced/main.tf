@@ -1,12 +1,11 @@
 resource "azurerm_kubernetes_cluster" "main" {
   count = var.enabled ? 1 : 0
-
   name                = "${var.prefix}-aks"
   resource_group_name = var.resource_group_name
-  location            = var.location != "" ? var.location : data.azurerm_resource_group.self.location
+  location            = var.location
+
   dns_prefix          = "${var.prefix}-dns"
   kubernetes_version  = var.k8s_version
-
   tags = {
     "Deployment" = "Terraform Module"
   }
@@ -26,7 +25,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   linux_profile {
     admin_username = var.admin_user
     ssh_key {
-      key_data = file(var.ssh_public_key)
+      key_data = var.ssh_public_key
     }
   }
 
@@ -39,18 +38,18 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   service_principal {
-    client_id     = var.appid_self #azuread_application.self.application_id
-    client_secret = var.spid_self_secret #azuread_service_principal_password.self.value
+    client_id     = var.appid_client
+    client_secret = var.spid_self_secret
   }
 
   role_based_access_control {
     enabled = false
 
-    # Pre-Generated credentials (See README.md)
+    # Pre-Generated credentials
     azure_active_directory {
-      server_app_id     = var.appid_server #azuread_application.aks_server.application_id
-      client_app_id     = var.appid_client #azuread_application.aks_client.application_id
-      server_app_secret = var.spid_server_secret #azuread_service_principal_password.aks_server.value
+      client_app_id     = var.appid_client
+      server_app_id     = var.appid_server
+      server_app_secret = var.spid_server_secret
     }
   }
 

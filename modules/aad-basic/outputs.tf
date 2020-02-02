@@ -1,14 +1,10 @@
-output "appid" {
-  sensitive = false
-  value     = var.enabled ? azuread_application.main[0].id : ""
+output "client_id" {
+  description = ""
+  value       = var.enabled ? azuread_application.main[0].application_id : null
 }
 
-output "spid" {
-  sensitive = false
-  value     = var.enabled ? azuread_service_principal.main[0].id : ""
-}
-
-output "spid_secret" {
-  sensitive = true
-  value     = var.enabled ? azuread_service_principal_password.main[0].value : ""
+output "client_secret" {
+  description = ""
+  sensitive   = true
+  value       = var.enabled ? azuread_service_principal_password.main[0].value : null
 }

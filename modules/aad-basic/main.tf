@@ -1,6 +1,9 @@
+#
+# See https://docs.microsoft.com/en-us/azure/aks/azure-ad-integration?view=azure-cli-latest
+#
 resource "azuread_application" "main" {
   count = var.enabled ? 1 : 0
-  name  = "${var.prefix}-Server"
+  name = "${var.prefix}-Aks"
 
   type                    = "webapp/api"
   reply_urls              = ["https://www.kred.no"]
@@ -41,10 +44,11 @@ resource "azuread_application" "main" {
   }
 }
 
+
 # ------------------------------------------------------------------------------
 
 resource "azuread_service_principal" "main" {
-  count          = var.enabled ? 1 : 0
+  count = var.enabled ? 1 : 0
   application_id = azuread_application.main[0].application_id
 }
 
@@ -58,9 +62,9 @@ resource "azuread_service_principal" "main" {
 #   If the desired behaviour is to change the end date, then the resource must be
 #   manually tainted.
 resource "azuread_service_principal_password" "main" {
-  count                = var.enabled ? 1 : 0
+  count = var.enabled ? 1 : 0
   service_principal_id = azuread_service_principal.main[0].id
-  value                = random_string.main_password[0].result
+  value                = random_string.sp_main_password[0].result
   end_date             = timeadd(timestamp(), "876000h") # 100 years
 
   lifecycle {
@@ -72,8 +76,8 @@ resource "azuread_service_principal_password" "main" {
 
 # See https://www.terraform.io/docs/providers/random/r/string.html#keepers
 #   Generate new id if sp changes
-resource "random_string" "main_password" {
-  count   = var.enabled ? 1 : 0
+resource "random_string" "sp_main_password" {
+  count = var.enabled ? 1 : 0
   length  = 16
   special = true
 

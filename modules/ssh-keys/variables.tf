@@ -1,6 +1,4 @@
 # ==============================================================================
-#   REQUIRED (passed from main module)
+#   REQUIRED (passed from parent module)
 # ==============================================================================
-variable "enabled" {
-  description = "Is the module required"
-}
+variable "enabled" { description = "See parent module" }

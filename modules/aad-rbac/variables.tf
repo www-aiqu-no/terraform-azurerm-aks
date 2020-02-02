@@ -1,10 +1,5 @@
 # ==============================================================================
-#   REQUIRED (passed from main module)
+#   REQUIRED (passed from parent module)
 # ==============================================================================
-variable "enabled" {
-  description = "Are we using RBAC?"
-}
-
-variable "prefix" {
-  description = "Prefix for all the resources"
-}
+variable "enabled" { description = "See parent module" }
+variable "prefix"  { description = "See parent module" }

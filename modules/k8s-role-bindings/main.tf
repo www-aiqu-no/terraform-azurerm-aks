@@ -1,4 +1,6 @@
 resource "kubernetes_cluster_role_binding" "aks_roles" {
+  count = var.enabled ? 1 : 0
+
   metadata {
     name = "${var.prefix}-cluster-admins"
   }

@@ -2,10 +2,10 @@ resource "azurerm_kubernetes_cluster" "main" {
   count = var.enabled ? 1 : 0
 
   name                = "${var.prefix}-aks"
-  dns_prefix          = "${var.prefix}-dns"
+  dns_prefix          = var.dns_prefix
 
   resource_group_name = var.resource_group_name
-  location            = var.location != "" ? var.location : data.azurerm_resource_group.self.location
+  location            = var.location
 
   kubernetes_version = var.k8s_version
   tags = {
@@ -31,7 +31,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   linux_profile {
     admin_username = var.admin_user
     ssh_key {
-      key_data = file(var.ssh_public_key)
+      key_data = var.ssh_public_key
     }
   }
 

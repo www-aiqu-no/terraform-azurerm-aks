@@ -1,9 +1,9 @@
 #
 # See https://docs.microsoft.com/en-us/azure/aks/azure-ad-integration?view=azure-cli-latest
-#
-resource "azuread_application" "server" {
+# This is the aad aks application
+resource "azuread_application" "aks" {
   count = var.enabled ? 1 : 0
-  name = "${var.prefix}-RBAC-Server"
+  name = "${var.prefix}-aks"
 
   type                    = "webapp/api"
   reply_urls              = ["https://www.kred.no"]
@@ -44,9 +44,10 @@ resource "azuread_application" "server" {
   }
 }
 
-resource "azuread_application" "client" {
+# This is the rbac API endpoint for users
+resource "azuread_application" "rbac" {
   count = var.enabled ? 1 : 0
-  name = "${var.prefix}-RBAC-Client"
+  name = "${var.prefix}-aks-rbac"
 
   reply_urls              = ["https://www.kred.no"]
   type                    = "native"
@@ -65,65 +66,32 @@ resource "azuread_application" "client" {
 
   # AKS server
   required_resource_access {
-    resource_app_id = azuread_application.server[0].application_id
+    resource_app_id = azuread_application.aks[0].application_id
 
     resource_access {
       # AKS Server app Oauth2 permissions id
-      id   = lookup(azuread_application.server[0].oauth2_permissions[0], "id")
-      type = "Scope"
-    }
-   }
-}
-
-resource "azuread_application" "self" {
-  count = var.enabled ? 1 : 0
-  name = "${var.prefix}-RBAC-Self"
-
-  reply_urls              = ["https://www.kred.no"]
-  type                    = "native"
-  group_membership_claims = "All"
-
-  # Windows Azure Active Directory API
-  required_resource_access {
-    resource_app_id = "00000002-0000-0000-c000-000000000000"
-
-    # DELEGATED PERMISSION: "Sign in and read user profile"
-    resource_access {
-      id   = "311a71cc-e848-46a1-bdf8-97ff7156d8e6"
+      id   = lookup(azuread_application.aks[0].oauth2_permissions[0], "id")
       type = "Scope"
     }
   }
-
-  # AKS server
-  required_resource_access {
-    resource_app_id = azuread_application.server[0].application_id
-
-    resource_access {
-      # AKS Server app Oauth2 permissions id
-      id   = lookup(azuread_application.server[0].oauth2_permissions[0], "id")
-      type = "Scope"
-    }
-   }
 }
 
 # ------------------------------------------------------------------------------
 
-resource "azuread_service_principal" "server" {
+# Here we define the service principals ('permissions') for users
+resource "azuread_service_principal" "aks" {
   count = var.enabled ? 1 : 0
-  application_id = azuread_application.server[0].application_id
+  application_id = azuread_application.aks[0].application_id
 }
 
-resource "azuread_service_principal" "client" {
+resource "azuread_service_principal" "rbac_client" {
   count = var.enabled ? 1 : 0
-  application_id = azuread_application.client[0].application_id
-}
-
-resource "azuread_service_principal" "self" {
-  count = var.enabled ? 1 : 0
-  application_id = azuread_application.self[0].application_id
+  application_id = azuread_application.rbac[0].application_id
 }
 
 # ------------------------------------------------------------------------------
+
+# Here we create access credentials
 
 # See https://www.terraform.io/docs/configuration/resources.html#lifecycle-lifecycle-customizations
 #   The end date will change at each run (terraform apply), causing a new password to
@@ -132,10 +100,10 @@ resource "azuread_service_principal" "self" {
 #
 #   If the desired behaviour is to change the end date, then the resource must be
 #   manually tainted.
-resource "azuread_service_principal_password" "server" {
+resource "azuread_service_principal_password" "aks" {
   count = var.enabled ? 1 : 0
-  service_principal_id = azuread_service_principal.server[0].id
-  value                = random_string.application_server_password[0].result
+  service_principal_id = azuread_service_principal.aks[0].id
+  value                = random_string.aks_password[0].result
   end_date             = timeadd(timestamp(), "876000h") # 100 years
 
   lifecycle {
@@ -143,21 +111,21 @@ resource "azuread_service_principal_password" "server" {
   }
 }
 
-resource "azuread_service_principal_password" "client" {
-  count = var.enabled ? 1 : 0
-  service_principal_id = azuread_service_principal.client[0].id
-  value                = random_string.application_client_password[0].result
-  end_date             = timeadd(timestamp(), "876000h") # 100 years
-
-  lifecycle {
-    ignore_changes = [end_date]
-  }
-}
+#resource "azuread_service_principal_password" "rbac_clients" {
+#  count = var.enabled ? 1 : 0
+#  service_principal_id = azuread_service_principal.rbac_client[0].id
+#  value                = random_string.rbac_client_password[0].result
+#  end_date             = timeadd(timestamp(), "876000h") # 100 years
+#
+#  lifecycle {
+#    ignore_changes = [end_date]
+#  }
+#}
 
 resource "azuread_service_principal_password" "self" {
   count = var.enabled ? 1 : 0
-  service_principal_id = azuread_service_principal.self[0].id
-  value                = random_string.application_self_password[0].result
+  service_principal_id = azuread_service_principal.rbac_client[0].id
+  value                = random_string.rbac_self_password[0].result
   end_date             = timeadd(timestamp(), "876000h") # 100 years
 
   lifecycle {
@@ -169,32 +137,32 @@ resource "azuread_service_principal_password" "self" {
 
 # See https://www.terraform.io/docs/providers/random/r/string.html#keepers
 #   Generate new id if sp changes
-resource "random_string" "application_server_password" {
+resource "random_string" "aks_password" {
   count = var.enabled ? 1 : 0
   length  = 16
   special = true
 
   keepers = {
-    service_principal = azuread_service_principal.server[0].id
+    service_principal = azuread_service_principal.aks[0].id
   }
 }
 
-resource "random_string" "application_client_password" {
+resource "random_string" "rbac_client_password" {
   count = var.enabled ? 1 : 0
   length  = 16
   special = true
 
   keepers = {
-    service_principal = azuread_service_principal.client[0].id
+    service_principal = azuread_service_principal.rbac_client[0].id
   }
 }
 
-resource "random_string" "application_self_password" {
+resource "random_string" "rbac_self_password" {
   count = var.enabled ? 1 : 0
   length  = 16
   special = true
 
   keepers = {
-    service_principal = azuread_service_principal.self[0].id
+    service_principal = azuread_service_principal.rbac_client[0].id
   }
 }

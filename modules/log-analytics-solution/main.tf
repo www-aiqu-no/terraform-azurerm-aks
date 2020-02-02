@@ -1,10 +1,10 @@
 resource "azurerm_log_analytics_solution" "main" {
-  solution_name         = "ContainerInsights"
+  count                 = var.enabled ? 1 : 0
+  solution_name         = "${var.prefix}-ContainerInsights"
   location              = var.location
   resource_group_name   = var.resource_group_name
-  workspace_resource_id = var.workspace_resource_id
-  workspace_name        = var.workspace_name
-
+  workspace_resource_id = var.log_analytics_workspace_id
+  workspace_name        = var.log_analytics_workspace_name
   plan {
     publisher = "Microsoft"
     product   = "OMSGallery/ContainerInsights"

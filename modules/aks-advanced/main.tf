@@ -6,9 +6,7 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   dns_prefix          = "${var.prefix}-dns"
   kubernetes_version  = var.k8s_version
-  tags = {
-    "Deployment" = "Terraform Module"
-  }
+  tags                = var.tags
 
   # See https://www.terraform.io/docs/providers/azurerm/r/kubernetes_cluster.html#default_node_pool
   default_node_pool {
@@ -59,7 +57,7 @@ resource "azurerm_kubernetes_cluster" "main" {
       enabled = true
     }
     oms_agent {
-      enabled = false
+      enabled = var.log_analytics_enabled
     }
     # See https://docs.microsoft.com/en-us/azure/aks/http-application-routing
     http_application_routing {

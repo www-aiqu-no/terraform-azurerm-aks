@@ -1,7 +1,9 @@
 output "id" {
-  value = var.enabled ? azurerm_log_analytics_workspace.main.id : ""
+  description = "The id of the workspace created for Log Analytics"
+  value       = var.enabled ? azurerm_log_analytics_workspace.main[0].id : null
 }
 
 output "name" {
-  value = var.enabled ? azurerm_log_analytics_workspace.main.name : ""
+  description = "The name of the workspace created for Log Analytics"
+  value       = var.enabled ? azurerm_log_analytics_workspace.main[0].name : null
 }

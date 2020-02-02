@@ -1,13 +1,13 @@
 module "resource_group" {
   source   = "./modules/resource-group"
-  enabled  = var.resource_group_override != "" ? false : true
+  enabled  = (var.resource_group_override != "") ? false : true
   prefix   = var.prefix
   location = var.location
 }
 
 module "ssh_keys" {
   source = "./modules/ssh-keys"
-  enabled = var.ssh_public_key != "" ? false : true
+  enabled = (var.ssh_public_key != "") ? false : true
 }
 
 # ==============================================================================
@@ -17,29 +17,30 @@ module "ssh_keys" {
 
 module "service_principals_basic" {
   source         = "./modules/aad-basic"
-  enabled        = var.cluster_type == "basic" ? true : false
+  enabled        = (var.cluster_type == "basic") ? true : false
   prefix         = var.prefix
 }
 
 module "aks_basic" {
-  source              = "./modules/aks-basic"
-  enabled             = var.initialized && (var.cluster_type == "basic") ? true : false
-  prefix              = var.prefix
-  location            = var.location
-  resource_group_name = var.resource_group_override != "" ? var.resource_group_override : module.resource_group.name
-  client_id           = var.appid_client            != "" ? var.appid_client            : module.service_principals_basic.client_id
-  client_secret       = var.spid_client_secret      != "" ? var.spid_client_secret      : module.service_principals_basic.client_secret
-  ssh_public_key      = var.ssh_public_key          != "" ? var.ssh_public_key          : module.ssh_keys.public_ssh_key
-  admin_user          = var.admin_user
-  k8s_version         = var.k8s_version
-  tags                = var.tags
-  dns_prefix          = var.dns_prefix
-  pool_name           = var.pool_name
-  pool_vm_type        = var.pool_vm_type
-  pool_vm_size        = var.pool_vm_size
-  pool_vm_disk_size   = var.pool_vm_disk_size
-  pool_vm_count       = var.pool_vm_count
-  pool_auto_scaling   = var.pool_auto_scaling
+  source                = "./modules/aks-basic"
+  enabled               = (var.initialized && var.cluster_type == "basic") ? true : false
+  prefix                = var.prefix
+  location              = var.location
+  resource_group_name   = var.resource_group_override != "" ? var.resource_group_override : module.resource_group.name
+  client_id             = var.appid_client            != "" ? var.appid_client            : module.service_principals_basic.client_id
+  client_secret         = var.spid_client_secret      != "" ? var.spid_client_secret      : module.service_principals_basic.client_secret
+  ssh_public_key        = var.ssh_public_key          != "" ? var.ssh_public_key          : module.ssh_keys.public_ssh_key
+  admin_user            = var.admin_user
+  k8s_version           = var.k8s_version
+  tags                  = var.tags
+  dns_prefix            = var.dns_prefix
+  pool_name             = var.pool_name
+  pool_vm_type          = var.pool_vm_type
+  pool_vm_size          = var.pool_vm_size
+  pool_vm_disk_size     = var.pool_vm_disk_size
+  pool_vm_count         = var.pool_vm_count
+  pool_auto_scaling     = var.pool_auto_scaling
+  log_analytics_enabled = var.log_analytics_enabled
 }
 
 # ==============================================================================
@@ -54,38 +55,63 @@ module "service_principals_rbac" {
 }
 
 module "aks_advanced" {
-  source              = "./modules/aks-advanced"
-  enabled             = var.initialized && (var.cluster_type == "advanced") ? true : false
-  prefix              = var.prefix
-  location            = var.location
-  resource_group_name = var.resource_group_override != "" ? var.resource_group_override : module.resource_group.name
-  appid_server        = var.appid_server            != "" ? var.appid_server            : module.service_principals_rbac.appid_server
-  appid_client        = var.appid_client            != "" ? var.appid_client            : module.service_principals_rbac.appid_client
-  spid_server_secret  = var.spid_server_secret      != "" ? var.spid_server_secret      : module.service_principals_rbac.spid_server_secret
-  spid_client_secret  = var.spid_client_secret      != "" ? var.spid_client_secret      : module.service_principals_rbac.spid_client_secret
-  ssh_public_key      = var.ssh_public_key          != "" ? var.ssh_public_key          : module.ssh_keys.public_ssh_key
-  admin_user          = var.admin_user
-  k8s_version         = var.k8s_version
-  tags                = var.tags
-  dns_prefix          = var.dns_prefix
-  pool_name           = var.pool_name
-  pool_vm_type        = var.pool_vm_type
-  pool_vm_size        = var.pool_vm_size
-  pool_vm_disk_size   = var.pool_vm_disk_size
-  pool_vm_count       = var.pool_vm_count
-  pool_auto_scaling   = var.pool_auto_scaling
+  source                = "./modules/aks-advanced"
+  enabled               = (var.initialized && var.cluster_type == "advanced") ? true : false
+  prefix                = var.prefix
+  location              = var.location
+  resource_group_name   = var.resource_group_override != "" ? var.resource_group_override : module.resource_group.name
+  appid_server          = var.appid_server            != "" ? var.appid_server            : module.service_principals_rbac.appid_server
+  appid_client          = var.appid_client            != "" ? var.appid_client            : module.service_principals_rbac.appid_client
+  spid_server_secret    = var.spid_server_secret      != "" ? var.spid_server_secret      : module.service_principals_rbac.spid_server_secret
+  spid_client_secret    = var.spid_client_secret      != "" ? var.spid_client_secret      : module.service_principals_rbac.spid_client_secret
+  ssh_public_key        = var.ssh_public_key          != "" ? var.ssh_public_key          : module.ssh_keys.public_ssh_key
+  admin_user            = var.admin_user
+  k8s_version           = var.k8s_version
+  tags                  = var.tags
+  dns_prefix            = var.dns_prefix
+  pool_name             = var.pool_name
+  pool_vm_type          = var.pool_vm_type
+  pool_vm_size          = var.pool_vm_size
+  pool_vm_disk_size     = var.pool_vm_disk_size
+  pool_vm_count         = var.pool_vm_count
+  pool_auto_scaling     = var.pool_auto_scaling
+  log_analytics_enabled = var.log_analytics_enabled
 }
 
 # ==============================================================================
-#  TODO: Cluster Configuration
+#  Log Analytics Solution
 # ==============================================================================
 
-# Note that this sub-module requires the tf-executor to have the following
+module "log_analytics_workspace" {
+  source                      = "./modules/log-analytics-workspace"
+  enabled                     = (var.initialized && var.log_analytics_enabled) ? true : false
+  prefix                      = var.prefix
+  location                    = var.location
+  resource_group_name         = var.resource_group_override != "" ? var.resource_group_override : module.resource_group.name
+  log_analytics_workspace_sku = var.log_analytics_workspace_sku
+  log_retention_in_days       = var.log_retention_in_days
+}
+
+module "log_analytics_solution" {
+  source                       = "./modules/log-analytics-solution"
+  enabled                      = (var.initialized && var.log_analytics_enabled) ? true : false
+  prefix                       = var.prefix
+  location                     = var.location
+  resource_group_name          = var.resource_group_override != "" ? var.resource_group_override : module.resource_group.name
+  log_analytics_workspace_id   = module.log_analytics_workspace.id
+  log_analytics_workspace_name = module.log_analytics_workspace.name
+}
+
+# ==============================================================================
+#  TODO: AKS Cluster Configuration
+# ==============================================================================
+
+# NOTE: Use of this sub-module requires the tf-executor to have the following
 # permission(s) in azure ad:
 #   - "Microsoft.Authorization/roleAssignments/*"
 module "k8s_role_bindings" {
   source      = "./modules/k8s-role-bindings"
-  enabled     = var.initialized && var.configure_k8s_roles
+  enabled     = (var.initialized && var.configure_k8s_roles) ? true : false
   prefix      = var.prefix
   admin_group = var.aad_k8s_admin_group
 }

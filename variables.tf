@@ -129,10 +129,31 @@ variable "spid_client_secret" {
 
 # ------------------------------------------------------------------------------
 
-variable "use_log_analytics" {
+variable "log_analytics_enabled" {
   description = "Configure ContainerInsights (analytics)"
   default     = false
 }
+
+variable "log_analytics_workspace_sku" {
+  description = "The SKU (pricing level) of the Log Analytics workspace"
+  default     = "PerGB2018"
+}
+
+variable "log_retention_in_days" {
+  description = "The retention period for the logs in days"
+  default     = 7
+}
+
+# TODO: Allow using existing workspace
+#variable "log_analytics_workspace_id" {
+#  description = "The id of the workspace created for Log Analytics"
+#  default     = ""
+#}
+
+#variable "log_analytics_workspace_name" {
+#  description = "The name of the workspace created for Log Analytics"
+#  default     = ""
+#}
 
 # ------------------------------------------------------------------------------
 

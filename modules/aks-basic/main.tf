@@ -8,9 +8,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   location            = var.location
 
   kubernetes_version = var.k8s_version
-  tags = {
-    "Deployment" = "Terraform Module"
-  }
+  tags               = var.tags
 
   service_principal {
     client_id     = var.client_id
@@ -45,7 +43,7 @@ resource "azurerm_kubernetes_cluster" "main" {
       enabled = true
     }
     oms_agent {
-      enabled = false
+      enabled = var.log_analytics_enabled
     }
     # See https://docs.microsoft.com/en-us/azure/aks/http-application-routing
     http_application_routing {

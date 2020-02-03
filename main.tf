@@ -1,3 +1,16 @@
+# ==============================================================================
+#   Required providers
+# ==============================================================================
+provider "azurerm"    { version = "~> 1.42" }
+provider "azuread"    { version = "~> 0.7"  }
+provider "random"     { version = "~> 2.2"  }
+provider "local"      { version = "~> 1.4"  }
+provider "tls"        { version = "~> 2.1"  }
+
+# ==============================================================================
+#   Create required resources, if not provided
+# ==============================================================================
+
 module "resource_group" {
   source   = "./modules/resource-group"
   enabled  = (var.resource_group_override != "") ? false : true
@@ -11,8 +24,8 @@ module "ssh_keys" {
 }
 
 # ==============================================================================
-#  Deploy basic AKS cluster
-#    Use: Set variable 'cluster_type' to 'basic' (default)
+#  Deploy 'basic' AKS cluster
+#    > cluster_type = basic (default)
 # ==============================================================================
 
 module "service_principals_basic" {
@@ -45,8 +58,8 @@ module "aks_basic" {
 }
 
 # ==============================================================================
-#  Deploy advanced AKS cluster (rbac & cni enabled)
-#    Use: Set variable 'cluster_type' to 'advanced'
+#  Deploy 'advanced' AKS cluster (rbac & cni enabled)
+#    > cluster_type = advanced
 # ==============================================================================
 
 module "service_principals_rbac" {
@@ -81,7 +94,8 @@ module "aks_advanced" {
 }
 
 # ==============================================================================
-#  Log Analytics Solution
+#  Deploy Log Analytics Solution
+#    > log_analytics_enabled = true
 # ==============================================================================
 
 module "log_analytics_workspace" {
@@ -105,15 +119,12 @@ module "log_analytics_solution" {
 }
 
 # ==============================================================================
-#  TODO: AKS Cluster Configuration
+#   OPTIONAL: Configure the deployed cluster
+#     > kube_management_enabled = true
 # ==============================================================================
-
-# NOTE: Use of this sub-module requires the tf-executor to have the following
-# permission(s) in azure ad:
-#   - "Microsoft.Authorization/roleAssignments/*"
-module "k8s_role_bindings" {
-  source      = "./modules/k8s-role-bindings"
-  enabled     = (var.initialized && var.configure_k8s_roles) ? true : false
-  prefix      = var.prefix
-  admin_group = var.aad_k8s_admin_group
+module "kube_management" {
+  source      = "./modules/kube-modules"
+  enabled     = var.kube_management_enabled ? true : false
+  kube_config = var.cluster_type == "advanced" ? module.aks_advanced.kube_config : module.aks_basic.kube_config
+  admin_group = var.kube_admin_group
 }

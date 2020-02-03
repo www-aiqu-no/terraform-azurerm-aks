@@ -1,8 +1,8 @@
-resource "kubernetes_cluster_role_binding" "aks_roles" {
+resource "kubernetes_cluster_role_binding" "roles" {
   count = var.enabled ? 1 : 0
 
   metadata {
-    name = "${var.prefix}-cluster-admins"
+    name = "cluster-admin"
   }
 
   role_ref {
@@ -14,6 +14,6 @@ resource "kubernetes_cluster_role_binding" "aks_roles" {
   subject {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Group"
-    name      = "b6605286-5d3c-4f9e-8701-b98208b84c6b"
+    name      = var.admin_group #"b6605286-5d3c-4f9e-8701-b98208b84c6b"
   }
 }

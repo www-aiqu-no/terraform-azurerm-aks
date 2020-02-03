@@ -3,7 +3,7 @@
 # ==============================================================================
 
 resource "kubernetes_cluster_role_binding" "cluster_admin" {
-  count = (var.enabled && admin_group != "") ? 1 : 0
+  count = (var.enabled && var.admin_group != "") ? 1 : 0
 
   metadata {
     name = "admininstrators"

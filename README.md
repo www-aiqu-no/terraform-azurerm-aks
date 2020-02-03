@@ -79,7 +79,7 @@ These modules are nested under the 'kube-modules' moduleto keep the main module 
 
 ..more to come
 
-## Extra provisioner permissions
+### Extra provisioner permissions
 By default, the terraform provisioner doesn't provide enough permissions (if you follow the official guilde). To enable managing roles, you need to add custom permission as well:
 
 ```json
@@ -99,10 +99,18 @@ By default, the terraform provisioner doesn't provide enough permissions (if you
 }
 ```
 
+### Updating existing roles
+If you want to update role, you might have to taint them first (since update is not supported, and unique name is required)
+```bash
+# Example
+$ terraform taint module.testing.module.kube_management.module.role_bindings.kubernetes_cluster_role_binding.<name-of-role-resource>[0]
+```
+
 # TODO:
 - Add management of network resources
 - Add more kube-customization options
 - Add automated testing
+- Add optional deployments of consul-, vault- and nomad control-planes
 
 # Links
 - [Terraform Modules documentation](https://www.terraform.io/docs/modules/index.html)

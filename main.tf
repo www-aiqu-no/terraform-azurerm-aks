@@ -1,16 +1,4 @@
 # ==============================================================================
-#   Required providers
-# ==============================================================================
-#provider "azurerm"    { version = "~> 1.42" }
-#provider "azuread"    { version = "~> 0.7"  }
-#provider "random"     { version = "~> 2.2"  }
-#provider "local"      { version = "~> 1.4"  }
-#provider "tls"        { version = "~> 2.1"  }
-
-# This is added in sub-module, with authentication from deployment
-#provider "kubernetes" { version = "~> 1.10" }
-
-# ==============================================================================
 #   Create required resources, if not provided
 # ==============================================================================
 
@@ -125,9 +113,11 @@ module "log_analytics_solution" {
 #   OPTIONAL: Configure the deployed cluster
 #     > kube_management_enabled = true
 # ==============================================================================
+
 module "kube_management" {
-  source      = "./modules/kube-modules"
-  enabled     = var.kube_management_enabled ? true : false
-  kube_config = var.cluster_type == "advanced" ? module.aks_advanced.kube_config : module.aks_basic.kube_config
-  admin_group = var.kube_admin_group
+  source             = "./modules/kube-modules"
+  enabled            = var.kube_management_enabled ? true : false
+  kube_config        = var.cluster_type == "advanced" ? module.aks_advanced.kube_config : module.aks_basic.kube_config
+  admin_group        = var.kube_admin_group
+  dashboard_as_admin = var.kube_dashboard_as_admin
 }

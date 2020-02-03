@@ -15,7 +15,7 @@ variable "cluster_type" {
   description = "The type of cluster you want to deploy (basic/advanced)"
   default     = "basic"
 
-  # Experimental
+  # TODO: Experimental - validate inputs
   #validation {
   #  condition     = contains(["basic","advanced"], var.cluster_type)
   #  error_message = "Valid options are 'basic' and 'advanced'."
@@ -177,4 +177,9 @@ variable "kube_management_enabled" {
 variable "kube_admin_group" {
   description = "Make members of Azure AAD group kube administrators"
   default     = "" #"00000000-0000-0000-0000-000000000000"
+}
+
+variable "kube_dashboard_as_admin" {
+  description = "Make the dashboard ServiceAccount cluster administrtor (potentially insecure)"
+  default     = false
 }

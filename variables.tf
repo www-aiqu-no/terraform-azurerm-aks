@@ -2,7 +2,7 @@
 
 # ==============================================================================
 #   OPTIONAL
-#   - This is where you customize your cluster
+#   - This is where you customize your cluster deployment
 # ==============================================================================
 
 # NOTE: Setting this back to 'false' after deploying your cluster will DESTROY resources on apply
@@ -141,7 +141,7 @@ variable "log_analytics_workspace_sku" {
 
 variable "log_retention_in_days" {
   description = "The retention period for the logs in days"
-  default     = 7
+  default     = 30
 }
 
 # TODO: Allow using existing workspace
@@ -164,14 +164,17 @@ variable "use_azure_cni" {
   default     = false
 }
 
-# ------------------------------------------------------------------------------
+# ==============================================================================
+#   OPTIONAL
+#   - This is where you customize your deployed k8s cluster
+# ==============================================================================
 
-variable "configure_k8s_roles" {
-  description = "Configure cluster roles"
+variable "kube_management_enabled" {
+  description = "Enable management of some basic kubernetes settings"
   default     = false
 }
 
-variable "aad_k8s_admin_group" {
-  description = "k8s administrator group in azure aad"
-  default     = "00000000-0000-0000-0000-000000000000"
+variable "kube_admin_group" {
+  description = "Make members of Azure AAD group kube administrators"
+  default     = "" #"00000000-0000-0000-0000-000000000000"
 }

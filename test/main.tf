@@ -7,39 +7,27 @@ terraform {
   #experiments = [variable_validation]
 }
 
-# ==============================================================================
-#   Providers
-# ==============================================================================
-
-provider "azurerm"    { version = "~> 1.42" }
-provider "azuread"    { version = "~> 0.7"  }
-provider "random"     { version = "~> 2.2"  }
-provider "local"      { version = "~> 1.4"  }
-provider "tls"        { version = "~> 2.1"  }
-
-# ==============================================================================
-#   Modules Settings
-# ==============================================================================
-
+# Just for creating random name(s) during testing
 resource "random_string" "prefix" {
   length  = 4
   special = false
 }
 
-module "testing" {
+# Deployment
+
+module "testing_advanced" {
   #source       = "github.com/www-aiqu-no/terraform-azurerm-aks?ref=master"
+  #version      = "0.1.0"
+
+  #See https://www.terraform.io/docs/configuration/modules.html#passing-providers-explicitly
+  #providers = {}
+
   source       = "../."
   prefix       = random_string.prefix.result
   cluster_type = "advanced"
-  initialized  = false
-}
+  #initialized  = true
 
-provider "kubernetes" {
-  version                = "~> 1.10"
-  host                   = module.testing.kube_config.0.host
-  username               = module.testing.kube_config.0.username
-  password               = module.testing.kube_config.0.password
-  client_certificate     = base64decode(module.testing.kube_config.0.client_certificate)
-  client_key             = base64decode(module.testing.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(module.testing.kube_config.0.cluster_ca_certificate)
+  #log_analytics_enabled   = true
+  #kube_management_enabled = true
+  #kube_admin_group = "<Group Id or Name>"
 }

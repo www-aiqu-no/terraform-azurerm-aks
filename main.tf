@@ -1,11 +1,14 @@
 # ==============================================================================
 #   Required providers
 # ==============================================================================
-provider "azurerm"    { version = "~> 1.42" }
-provider "azuread"    { version = "~> 0.7"  }
-provider "random"     { version = "~> 2.2"  }
-provider "local"      { version = "~> 1.4"  }
-provider "tls"        { version = "~> 2.1"  }
+#provider "azurerm"    { version = "~> 1.42" }
+#provider "azuread"    { version = "~> 0.7"  }
+#provider "random"     { version = "~> 2.2"  }
+#provider "local"      { version = "~> 1.4"  }
+#provider "tls"        { version = "~> 2.1"  }
+
+# This is added in sub-module, with authentication from deployment
+#provider "kubernetes" { version = "~> 1.10" }
 
 # ==============================================================================
 #   Create required resources, if not provided
@@ -44,7 +47,7 @@ module "aks_basic" {
   client_secret         = var.spid_client_secret      != "" ? var.spid_client_secret      : module.service_principals_basic.client_secret
   ssh_public_key        = var.ssh_public_key          != "" ? var.ssh_public_key          : module.ssh_keys.public_ssh_key
   admin_user            = var.admin_user
-  k8s_version           = var.k8s_version
+  kube_version          = var.kube_version
   tags                  = var.tags
   dns_prefix            = var.dns_prefix
   pool_name             = var.pool_name
@@ -80,7 +83,7 @@ module "aks_advanced" {
   spid_client_secret    = var.spid_client_secret      != "" ? var.spid_client_secret      : module.service_principals_rbac.spid_client_secret
   ssh_public_key        = var.ssh_public_key          != "" ? var.ssh_public_key          : module.ssh_keys.public_ssh_key
   admin_user            = var.admin_user
-  k8s_version           = var.k8s_version
+  kube_version          = var.kube_version
   tags                  = var.tags
   dns_prefix            = var.dns_prefix
   pool_name             = var.pool_name

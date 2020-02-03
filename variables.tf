@@ -40,7 +40,7 @@ variable "resource_group_override" {
 
 # ------------------------------------------------------------------------------
 
-variable "k8s_version" {
+variable "kube_version" {
   description = "Version of kubernetes to deploy"
   default     = "1.15.7"
 }

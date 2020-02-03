@@ -5,7 +5,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   location            = var.location
 
   dns_prefix          = "${var.prefix}-dns"
-  kubernetes_version  = var.k8s_version
+  kubernetes_version  = var.kube_version
   tags                = var.tags
 
   # See https://www.terraform.io/docs/providers/azurerm/r/kubernetes_cluster.html#default_node_pool

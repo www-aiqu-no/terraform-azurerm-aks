@@ -1,4 +1,6 @@
-# Connect to created cluster
+# ==============================================================================
+#  TODO: AKS Cluster Configuration
+# ==============================================================================
 provider "kubernetes" {
   version                = "~> 1.10"
   host                   = var.kube_config.0.host
@@ -8,10 +10,6 @@ provider "kubernetes" {
   client_key             = base64decode(var.kube_config.0.client_key)
   cluster_ca_certificate = base64decode(var.kube_config.0.cluster_ca_certificate)
 }
-
-# ==============================================================================
-#  TODO: AKS Cluster Configuration
-# ==============================================================================
 
 # NOTE: Use of this sub-module requires the tf-executor to have the following
 # permission(s) in azure ad:

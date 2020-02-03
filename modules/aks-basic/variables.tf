@@ -6,7 +6,7 @@ variable "prefix"              { description = "See parent module" }
 variable "location"            { description = "See parent module" }
 variable "resource_group_name" { description = "See parent module" }
 # --
-variable "k8s_version"    { description = "See parent module" }
+variable "kube_version"   { description = "See parent module" }
 variable "ssh_public_key" { description = "See parent module" }
 variable "admin_user"     { description = "See parent module" }
 variable "dns_prefix"     { description = "See parent module" }

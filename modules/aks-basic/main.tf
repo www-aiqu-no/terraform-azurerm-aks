@@ -7,7 +7,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   resource_group_name = var.resource_group_name
   location            = var.location
 
-  kubernetes_version = var.k8s_version
+  kubernetes_version = var.kube_version
   tags               = var.tags
 
   service_principal {

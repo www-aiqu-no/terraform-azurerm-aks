@@ -1,6 +1,6 @@
 # See https://github.com/hashicorp/terraform-github-actions
 ---
-name: 'GitHub Actions for Terraform Module'
+name: 'terraform-validate'
 on:
   - pull_request
 jobs:

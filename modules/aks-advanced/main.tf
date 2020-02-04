@@ -1,12 +1,12 @@
 resource "azurerm_kubernetes_cluster" "main" {
-  count = var.enabled ? 1 : 0
+  count               = var.enabled ? 1 : 0
   name                = "${var.prefix}-aks"
   resource_group_name = var.resource_group_name
   location            = var.location
 
-  dns_prefix          = "${var.prefix}-dns"
-  kubernetes_version  = var.kube_version
-  tags                = var.tags
+  dns_prefix         = "${var.prefix}-dns"
+  kubernetes_version = var.kube_version
+  tags               = var.tags
 
   # See https://www.terraform.io/docs/providers/azurerm/r/kubernetes_cluster.html#default_node_pool
   default_node_pool {

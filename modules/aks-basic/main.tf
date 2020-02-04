@@ -1,8 +1,8 @@
 resource "azurerm_kubernetes_cluster" "main" {
   count = var.enabled ? 1 : 0
 
-  name                = "${var.prefix}-aks"
-  dns_prefix          = var.dns_prefix
+  name       = "${var.prefix}-aks"
+  dns_prefix = var.dns_prefix
 
   resource_group_name = var.resource_group_name
   location            = var.location

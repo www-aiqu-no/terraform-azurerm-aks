@@ -47,13 +47,13 @@ resource "azuread_application" "aks" {
 
 # Service principal ('permission group') for users
 resource "azuread_service_principal" "aks" {
-  count = var.enabled ? 1 : 0
+  count          = var.enabled ? 1 : 0
   application_id = azuread_application.aks[0].application_id
 }
 
 # Access Credentials to SP
 resource "azuread_service_principal_password" "aks" {
-  count = var.enabled ? 1 : 0
+  count                = var.enabled ? 1 : 0
   service_principal_id = azuread_service_principal.aks[0].id
   value                = random_string.aks_password[0].result
   end_date             = timeadd(timestamp(), "876000h") # 100 years
@@ -64,7 +64,7 @@ resource "azuread_service_principal_password" "aks" {
 }
 
 resource "random_string" "aks_password" {
-  count = var.enabled ? 1 : 0
+  count   = var.enabled ? 1 : 0
   length  = 16
   special = true
 
@@ -78,7 +78,7 @@ resource "random_string" "aks_password" {
 # This is the rbac API endpoint for rbac-users
 resource "azuread_application" "rbac_client" {
   count = var.enabled ? 1 : 0
-  name = "${var.prefix}-rbac"
+  name  = "${var.prefix}-rbac"
 
   reply_urls = ["https://www.kred.no"]
   type       = "native"
@@ -107,13 +107,13 @@ resource "azuread_application" "rbac_client" {
 }
 
 resource "azuread_service_principal" "rbac_client" {
-  count = var.enabled ? 1 : 0
+  count          = var.enabled ? 1 : 0
   application_id = azuread_application.rbac_client[0].application_id
 }
 
 # Cluster credentials
 resource "azuread_service_principal_password" "self" {
-  count = var.enabled ? 1 : 0
+  count                = var.enabled ? 1 : 0
   service_principal_id = azuread_service_principal.rbac_client[0].id
   value                = random_string.rbac_self_password[0].result
   end_date             = timeadd(timestamp(), "876000h") # 100 years
@@ -124,7 +124,7 @@ resource "azuread_service_principal_password" "self" {
 }
 
 resource "random_string" "rbac_self_password" {
-  count = var.enabled ? 1 : 0
+  count   = var.enabled ? 1 : 0
   length  = 16
   special = true
 

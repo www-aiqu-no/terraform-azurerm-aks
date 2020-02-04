@@ -4,7 +4,8 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/www-aiqu-no/terraform-azurerm-aks)
 ![GitHub issues](https://img.shields.io/github/issues/www-aiqu-no/terraform-azurerm-aks)
 
-This module will deploy & configure (optional) a managed AKS cluster in Azure. It takes ~10 minutes to provision from scratch.
+This module will deploy a managed AKS cluster in Azure.
+It takes ~10 minutes to provision from scratch.
 The official module doesn't seem to be updated too often, and isn't as flexible as it should be
 
 #### Main Features
@@ -33,14 +34,15 @@ provider "tls"        { version = "~> 2.1"  }
 ```
 
 ## Sample Usage
-1. Run 'apply' to creat service principals in Azure AD (unless you provide them yourself; then skip to '3')
-2. [Manual Step](#grant): Grant the requested admin permissions for the aks-application(s) in Azure
+1. Run 'apply' to creat service principals in Azure AD (unless you provide them yourself; then skip to '3'), and also the log analytics workspace
+(if enabled)
+2. [Manual](#grant): Grant the requested admin permissions for the aks-application(s) in Azure
 3. Override the 'initialized' variable to 'true' & apply module again to deploy & configure cluster
 
 The below example will deploy the 'basic' version of the aks cluster, without any monitoring or cluster settings
 ```hcl
 terraform {
-  required_version = ">= 0.12"
+  required_version = "~> 0.12"
 }
 
 module "aks" {
@@ -48,7 +50,7 @@ module "aks" {
   version = "0.1.2"
 
   # Prefix for your resources
-  prefix       = "aksdemo"
+  prefix       = "AksExample"
 
   # Two options: basic (no rbac & cni networking) or advanced
   cluster_type = "basic"
@@ -150,10 +152,12 @@ Sensitive output values can not be exported (then you need to set
 'sensitive = false' first)
 
 ## TODO:
+- REMOVE separate role for basic... (grr)
 - Add management of network resources & change sku to 'standard'
 - Add more kube-customization options
 - Add automated testing
 - Optional Azure Application Gateway integration (ingress)
+- Add possibility for deploying multiple clusters in multiple regions
 
 ## External Links
 - [Terraform Modules documentation](https://www.terraform.io/docs/modules/index.html)

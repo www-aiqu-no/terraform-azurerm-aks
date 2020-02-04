@@ -1,6 +1,7 @@
 # v0.1.2 (Unreleased)
 #### BUG FIXES
 - Workaround for retrieving kubernetes credentials from correct module
+- Confused about tuples in kube_config's..
 
 #### IMPROVEMENTS
 - Added outputs to module

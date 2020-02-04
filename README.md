@@ -14,6 +14,7 @@ Please note that this is a work in progress, and any feedback & improvements are
 
 ## Providers
 ```hcl
+# See 'versions.tf'
 provider "azurerm"    { version = "~> 1.42" }
 provider "azuread"    { version = "~> 0.7"  }
 provider "random"     { version = "~> 2.2"  }
@@ -40,7 +41,7 @@ module "aks" {
   version = "0.1.2"
 
   # Prefix for your resources
-  prefix       = random_string.prefix.result
+  prefix       = "aksdemo"
 
   # Two options: basic (no rbac & cni networking) or advanced
   cluster_type = "basic"

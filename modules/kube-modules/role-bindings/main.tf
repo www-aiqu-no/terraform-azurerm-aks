@@ -6,7 +6,7 @@ resource "kubernetes_cluster_role_binding" "cluster_admin" {
   count = (var.enabled && var.admin_group != "") ? 1 : 0
 
   metadata {
-    name = "admininstrators"
+    name = "admins"
   }
 
   # Specify which role to assign

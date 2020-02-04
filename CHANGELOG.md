@@ -1,8 +1,16 @@
 # v0.1.2 (Unreleased)
-- Moved providers to 'versions'
+#### BUG FIXES
+- Workaround for retrieving kubernetes credentials from correct module
+
+#### IMPROVEMENTS
+- Added outputs to module
+- Moved providers to 'versions.tf'
 - Moved kubernetes-provider to kube-modules
+
+#### FEATURES
 - Added basic support for managing kubernetes roles
 
 # v0.1.1 (February 02, 2020)
+#### NOTES
 - Initial release
 - Support for basic & advanced cluster deployment

@@ -1,7 +1,23 @@
 # ==============================================================================
+#   Define local variables
+# ==============================================================================
+
+locals {
+  # AKS settings used by kubernetes provider internally (See versions.tf)
+  # Used since we have 2 types of clusters to select correct output, and the
+  # output kube_config values/hash can't be set to null
+  aks_kube_config    = !(var.initialized) ? null : var.cluster_type == "basic"    ? module.aks_basic.kube_config                                                 : module.aks_advanced.kube_admin_config
+  aks_host           = !(var.initialized) ? ""   : var.cluster_type == "advanced" ? module.aks_advanced.kube_admin_config.0.host                                 : module.aks_basic.kube_config.0.host
+  aks_certificate    = !(var.initialized) ? ""   : var.cluster_type == "advanced" ? base64decode(module.aks_advanced.kube_admin_config.0.client_certificate)     : base64decode(module.aks_basic.kube_config.0.client_certificate)
+  aks_key            = !(var.initialized) ? ""   : var.cluster_type == "advanced" ? base64decode(module.aks_advanced.kube_admin_config.0.client_key)             : base64decode(module.aks_basic.kube_config.0.client_key)
+  aks_ca_certificate = !(var.initialized) ? ""   : var.cluster_type == "advanced" ? base64decode(module.aks_advanced.kube_admin_config.0.cluster_ca_certificate) : base64decode(module.aks_basic.kube_config.0.cluster_ca_certificate)
+}
+
+# ==============================================================================
 #   Create required resources, if not provided
 # ==============================================================================
 
+# Create new resource group if one is not provided (override)
 module "resource_group" {
   source   = "./modules/resource-group"
   enabled  = (var.resource_group_override != "") ? false : true
@@ -9,6 +25,7 @@ module "resource_group" {
   location = var.location
 }
 
+# Generate private/public keys if public key is not provided
 module "ssh_keys" {
   source = "./modules/ssh-keys"
   enabled = (var.ssh_public_key != "") ? false : true
@@ -19,6 +36,7 @@ module "ssh_keys" {
 #    > cluster_type = basic (default)
 # ==============================================================================
 
+# Create basic Azure AD application
 module "service_principals_basic" {
   source         = "./modules/aad-basic"
   enabled        = (var.cluster_type == "basic") ? true : false
@@ -53,6 +71,7 @@ module "aks_basic" {
 #    > cluster_type = advanced
 # ==============================================================================
 
+# Create RBAC integration in Azure AD
 module "service_principals_rbac" {
   source  = "./modules/aad-rbac"
   enabled = var.cluster_type == "advanced" ? true : false
@@ -117,7 +136,6 @@ module "log_analytics_solution" {
 module "kube_management" {
   source             = "./modules/kube-modules"
   enabled            = (var.initialized && var.kube_management_enabled )? true : false
-  kube_config        = var.cluster_type == "advanced" ? module.aks_advanced.kube_config : module.aks_basic.kube_config
   admin_group        = var.kube_admin_group
   dashboard_as_admin = var.kube_dashboard_as_admin
 }

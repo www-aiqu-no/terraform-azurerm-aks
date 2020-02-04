@@ -1,9 +1,18 @@
 # Create an Azure Kubernetes Service (AKS) Cluster
+![GitHub top language](https://img.shields.io/github/languages/top/www-aiqu-no/terraform-azurerm-aks)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/www-aiqu-no/terraform-azurerm-aks?include_prereleases)
+![GitHub last commit](https://img.shields.io/github/last-commit/www-aiqu-no/terraform-azurerm-aks)
+![GitHub issues](https://img.shields.io/github/issues/www-aiqu-no/terraform-azurerm-aks)
+
 This module will deploy & configure (optional) a managed AKS cluster in Azure. The official module sadly doesn't seem to be updated too often, and isn't as flexible
 
 Please note that this is a work in progress, and any feedback & improvements are welcome!
 
-## Providers used
+- [Terraform Registry](https://registry.terraform.io/modules/www-aiqu-no/aks/azurerm)
+- [Github](https://github.com/www-aiqu-no/terraform-azurerm-aks)
+- [Issues](https://github.com/www-aiqu-no/terraform-azurerm-aks/issues)
+
+## Providers
 ```hcl
 provider "azurerm"    { version = "~> 1.42" }
 provider "azuread"    { version = "~> 0.7"  }
@@ -28,7 +37,7 @@ terraform {
 
 module "aks" {
   source  = "www-aiqu-no/aks/azurerm"
-  version = "0.1.0"
+  version = "0.1.2"
 
   # Prefix for your resources
   prefix       = random_string.prefix.result
@@ -40,13 +49,24 @@ module "aks" {
   #initialized  = true
 
   # You can optionally enable more configuration
+  # Note that provisioner (terraform user) need additional permissions to
+  # manage roles for the cluster (described below)
   #log_analytics_enabled   = true
   #kube_management_enabled = true
   #kube_admin_group = "<Group Id or Name>"
 }
+
+# NOTE: To print output from modules, you need to export it in root:
+output "kube_info" {
+  value = module.aks.info
+}
+
+output "kube_public_ssh_key" {
+  value = module.aks.public_ssh_key
+}
 ```
 
-### <a name="grant"></a>Grant Admin Permissions (Azure AD)
+## <a name="grant"></a>Grant Admin Permissions (Azure AD)
 Using CLI
 ```bash
 $ az ad app permission admin-consent --id $<applicationId>
@@ -79,8 +99,8 @@ These modules are nested under the 'kube-modules' moduleto keep the main module 
 
 ..more to come
 
-### Extra provisioner permissions
-By default, the terraform provisioner doesn't provide enough permissions (if you follow the official guilde). To enable managing roles, you need to add custom permission as well:
+## <a name="role_perm"></a>Extra provisioner permissions
+By default, the terraform provisioner doesn't provide enough permissions (if you follow the official guide). To enable managing roles, you need to add custom permission as well:
 
 ```json
 {
@@ -99,20 +119,31 @@ By default, the terraform provisioner doesn't provide enough permissions (if you
 }
 ```
 
-### Updating existing roles
+## Updating existing roles
 If you want to update role, you might have to taint them first (since update is not supported, and unique name is required)
 ```bash
 # Example
 $ terraform taint module.testing.module.kube_management.module.role_bindings.kubernetes_cluster_role_binding.<name-of-role-resource>[0]
 ```
 
-# TODO:
-- Add management of network resources
+## Output values
+Since terraform v0.12+, outputs from modules are no longer stored in the state.
+To print them (terraform output), you need to export them in your root module:
+```hcl
+output "some_name_you_want" {
+  value = <name-of-module>.<output-from-module>
+}
+```
+Sensitive output values can not be exported (then you need to set
+'sensitive = false' first)
+
+## TODO:
+- Add management of network resources & change sku to 'standard'
 - Add more kube-customization options
 - Add automated testing
-- Add optional deployments of consul-, vault- and nomad control-planes
+- Optional Azure Application Gateway integration (ingress)
 
-# Links
+## External Links
 - [Terraform Modules documentation](https://www.terraform.io/docs/modules/index.html)
 - [Terraform Registry](https://registry.terraform.io)
 - [Official AKS module](https://registry.terraform.io/modules/Azure/aks/azurerm/2.0.0)

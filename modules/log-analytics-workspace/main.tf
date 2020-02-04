@@ -10,7 +10,12 @@ resource "azurerm_log_analytics_workspace" "main" {
 # See https://www.terraform.io/docs/providers/random/r/string.html#keepers
 #   Generate new id if sp changes
 resource "random_string" "postfix" {
-  count   = var.enabled ? 1 : 0
-  length  = 5
-  special = false
+  count       = var.enabled ? 1 : 0
+  length      = 5
+  min_lower   = 2
+  min_numeric = 2
+  lower       = true
+  number      = true
+  upper       = false
+  special     = false
 }

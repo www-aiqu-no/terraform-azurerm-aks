@@ -28,6 +28,7 @@ variable "prefix" {
 }
 
 # NOTE: $ az account list-locations --output table
+# Examples: norwaywest, norwayeast, ..
 variable "location" {
   description = "Datacenter location for this deployment. Use 'az account list-locations --output table' to get a full list"
   default     = "eastus"

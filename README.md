@@ -4,9 +4,16 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/www-aiqu-no/terraform-azurerm-aks)
 ![GitHub issues](https://img.shields.io/github/issues/www-aiqu-no/terraform-azurerm-aks)
 
-This module will deploy & configure (optional) a managed AKS cluster in Azure. The official module sadly doesn't seem to be updated too often, and isn't as flexible
+This module will deploy & configure (optional) a managed AKS cluster in Azure. It takes ~10 minutes to provision from scratch.
+The official module doesn't seem to be updated too often, and isn't as flexible as it should be
 
-Please note that this is a work in progress, and any feedback & improvements are welcome!
+#### Main Features
+- basic or advanced deployment
+- minimal configuraion required
+- Optional customization of roles
+- Optional deploy of 'Log Analytics Solution'
+
+Please note that this is a work in progress, and any feedback & improvements are welcome
 
 - [Terraform Registry](https://registry.terraform.io/modules/www-aiqu-no/aks/azurerm)
 - [Github](https://github.com/www-aiqu-no/terraform-azurerm-aks)
@@ -68,17 +75,22 @@ output "kube_public_ssh_key" {
 ```
 
 ## <a name="grant"></a>Grant Admin Permissions (Azure AD)
-Using CLI
+You need to manually grant the permissions requested by azure ad
+applications created by this module in Azure
+
+#### Using CLI
 ```bash
 $ az ad app permission admin-consent --id $<applicationId>
 ```
-Using Azure Portal
+
+#### Using Azure Portal (click, click!)
   - Log on to portal
   - Locate your application(s) under 'Home > Azure Active Directory > App Registrations' (See under All Applications)
   - Select 'API Permissions' in the application(s)
   - Select 'Grant Admin Concent' > 'Yes'
 
-TODO: Using this module (automatic). Includes null_resource, delays & running cli-commands that are os-specific.
+#### Using this module (automatic)
+TODO: Includes null_resource, delays & running cli-commands that are os-specific.
 
 ## Retrieving & testing credentials
 ```bash
@@ -101,8 +113,7 @@ These modules are nested under the 'kube-modules' moduleto keep the main module 
 ..more to come
 
 ## <a name="role_perm"></a>Extra provisioner permissions
-By default, the terraform provisioner doesn't provide enough permissions (if you follow the official guide). To enable managing roles, you need to add custom permission as well:
-
+By default, the terraform provisioner doesn't provide enough permissions (if you follow the official guide). To enable management of roles for your cluster, you need to add custom some permissions for your subscription:
 ```json
 {
   "Name": "Terraform - Custom Permissions",

@@ -4,10 +4,10 @@
 
 provider "kubernetes" {
   version                = "~> 1.10"
-  host                   = var.kube_config.0.host
-  client_certificate     = base64decode(var.kube_config.0.client_certificate) # KUBE_CLIENT_CERT_DATA
-  client_key             = base64decode(var.kube_config.0.client_key) # KUBE_CLIENT_KEY_DATA
-  cluster_ca_certificate = base64decode(var.kube_config.0.cluster_ca_certificate) # KUBE_CLUSTER_CA_CERT_DATA
+  host                   = var.enabled ? var.kube_config[0].host : null
+  client_certificate     = var.enabled ? base64decode(var.kube_config[0].client_certificate) : null # KUBE_CLIENT_CERT_DATA
+  client_key             = var.enabled ? base64decode(var.kube_config[0].client_key) : null # KUBE_CLIENT_KEY_DATA
+  cluster_ca_certificate = var.enabled ? base64decode(var.kube_config[0].cluster_ca_certificate) : null # KUBE_CLUSTER_CA_CERT_DATA
   #load_config_file       = true # KUBE_LOAD_CONFIG_FILE
   #config_path            = "~/.kube/config" # KUBE_CONFIG
   #username               = var.kube_config.0.username

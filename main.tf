@@ -116,7 +116,7 @@ module "log_analytics_solution" {
 
 module "kube_management" {
   source             = "./modules/kube-modules"
-  enabled            = var.kube_management_enabled ? true : false
+  enabled            = (var.initialized && var.kube_management_enabled )? true : false
   kube_config        = var.cluster_type == "advanced" ? module.aks_advanced.kube_config : module.aks_basic.kube_config
   admin_group        = var.kube_admin_group
   dashboard_as_admin = var.kube_dashboard_as_admin

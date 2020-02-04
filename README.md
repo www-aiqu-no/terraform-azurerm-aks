@@ -1,5 +1,6 @@
 # Create an Azure Kubernetes Service (AKS) Cluster
 ![GitHub top language](https://img.shields.io/github/languages/top/www-aiqu-no/terraform-azurerm-aks)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/www-aiqu-no/terraform-azurerm-aks/terraform-validate)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/www-aiqu-no/terraform-azurerm-aks?include_prereleases)
 ![GitHub last commit](https://img.shields.io/github/last-commit/www-aiqu-no/terraform-azurerm-aks)
 ![GitHub issues](https://img.shields.io/github/issues/www-aiqu-no/terraform-azurerm-aks)

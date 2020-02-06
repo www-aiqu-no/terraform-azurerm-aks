@@ -24,12 +24,9 @@ resource "random_string" "prefix" {
 #   Deploy module (current)
 # ==============================================================================
 
-module "aks_test" {
+module "cluster" {
   source = "../."
   prefix = random_string.prefix.result
-  # --
-  initialized           = true
-  log_analytics_enabled = false
 }
 
 # ==============================================================================
@@ -38,11 +35,11 @@ module "aks_test" {
 
 # NOTE: To print output from modules, you need to export it in root:
 output "kube_info" {
-  value = module.aks_test.info
+  value = module.cluster.info
 }
 
-output "kube_public_ssh_key" {
-  value = module.aks_test.public_ssh_key
+output "kube_ssh_public_key" {
+  value = module.cluster.ssh_public_key
 }
 
 # ==============================================================================

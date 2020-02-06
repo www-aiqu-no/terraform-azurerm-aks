@@ -1,0 +1,9 @@
+#variable "" {}
+variable "resource_group_name" {}
+variable "appgw_subnet_address_prefix" {}
+variable "subnet_name_aks" {}
+variable "network_name" {}
+variable "network_address_prefix" {}
+variable "network_tags" {}
+variable "subnet_name_aks" {}
+variable "public_ip_tags" {}

@@ -32,6 +32,20 @@ variable "kube_version" {
   default     = "1.15.7"
 }
 
+# NOTE: The dns_prefix must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number.
+variable "kube_dns_prefix" {
+  description = "DNS prefix (required to be unique). Must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number."
+  default     = ""
+}
+
+variable "kube_tags" {
+  description = "Tags to add to the cluster"
+  type        = map(string)
+  default     = {}
+}
+
+# ------------------------------------------------------------------------------
+
 variable "admin_user" {
   description = "The Local Administrator for linux nodes in the cluster"
   default     = "aks"
@@ -40,18 +54,6 @@ variable "admin_user" {
 variable "ssh_public_key" {
   description = "SSH-key for accessing linux nodes in the cluster. No value will create local private key to disk, and use the public key for cluster"
   default     = ""
-}
-
-# NOTE: The dns_prefix must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number.
-variable "dns_prefix" {
-  description = "DNS prefix (required to be unique). Must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number."
-  default     = "AksDns"
-}
-
-variable "kube_tags" {
-  description = "Tags to add to the cluster"
-  type        = map(string)
-  default     = {}
 }
 
 # ------------------------------------------------------------------------------
@@ -71,20 +73,30 @@ variable "pool_vm_size" {
   default     = "Standard_DS2_v2"
 }
 
+# NOTE: Minimum size is 30
+variable "pool_vm_disk_size" {
+  description = "Size of disk on VMs in the default node pool"
+  default     = 30
+}
+
 variable "pool_vm_count" {
   description = "Number of VMs in the default node pool"
   default     = 1
 }
 
-variable "pool_auto_scaling" {
+variable "pool_auto_scaling_enabled" {
   description = "Enable autoscaling for default pool"
   default     = false
 }
 
-# NOTE: Minimum size is 30
-variable "pool_vm_disk_size" {
-  description = "Size of disk on VMs in the default node pool"
-  default     = 30
+variable "pool_auto_scaling_max" {
+  description = "Enable autoscaling for default pool"
+  default     = 3
+}
+
+variable "pool_auto_scaling_min" {
+  description = "Enable autoscaling for default pool"
+  default     = 1
 }
 
 # ------------------------------------------------------------------------------

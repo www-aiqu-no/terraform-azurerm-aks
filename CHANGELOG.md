@@ -1,4 +1,6 @@
 # v0.1.3 (Unreleased)
+#### NOTES
+- Split everything into sub-modules again (Sigh!)
 
 # v0.1.2 (February 06, 2020)
 #### NOTES

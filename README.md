@@ -43,7 +43,7 @@ provider "tls"        { version = "~> 2.1"  }
 $ terraform init
 # --
 # 1) Create the Azure AD services & principals:
-$ terraform apply -auto-approve -target module.aks.azuread_service_principal.server -target module.aks.azuread_service_principal.client
+$ terraform apply -auto-approve -target module.aks.module.aad.azuread_service_principal.server -target module.aks.module.aad.azuread_service_principal.client
 # --
 # 2) Manually grant the requested administrative privileges in Azure AD for the new principals in the new applications (see further below)
 # --

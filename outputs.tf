@@ -32,7 +32,7 @@ output "application_id_client" {
 output "info" {
   description = "Information about working with the cluster"
   sensitive   = false
-  value = <<-EOH
+  value       = <<-EOH
     # --
     #  See README.md for more info
     # --

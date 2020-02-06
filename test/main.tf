@@ -90,6 +90,6 @@ resource "kubernetes_cluster_role_binding" "dashboard_cluster_admin" {
   subject {
     kind      = "ServiceAccount"
     name      = "kubernetes-dashboard" # pre-defined
-    namespace = "kube-system" # v1 dashboard
+    namespace = "kube-system"          # v1 dashboard
   }
 }

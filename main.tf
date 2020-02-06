@@ -4,8 +4,7 @@
 
 # Lookup resource group (Issue #9: Not created in module due to submodule dependencies)
 data "azurerm_resource_group" "main" {
-  name     = "${var.prefix}-${var.resource_group_name}"
-  #location = var.location
+  name = var.resource_group_name
 }
 
 # Create random postfix string

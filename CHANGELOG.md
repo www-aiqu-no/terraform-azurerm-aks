@@ -1,15 +1,16 @@
 # v0.1.2 (Unreleased)
+#### NOTES
+- SIMPLIFIED module... Like, a lot. Removed all submodules. Tried adding basic
+  management of the deployed cluster, but ran into problems with provider & empty credentials. Keeping things separate is best, I now believe.. Do this in another module! Use this one to deploy the cluster & logging, then export the credentials for modifying your cluster.
+
 #### BUG FIXES
-- Workaround for retrieving kubernetes credentials from correct module
-- Confused about tuples in kube_config's..
+- N/A
 
 #### IMPROVEMENTS
-- Added outputs to module
-- Moved providers to 'versions.tf'
-- Moved kubernetes-provider to kube-modules
+- N/A
 
 #### FEATURES
-- Added basic support for managing kubernetes roles
+- N/A
 
 # v0.1.1 (February 02, 2020)
 #### NOTES

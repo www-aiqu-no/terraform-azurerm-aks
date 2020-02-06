@@ -1,52 +1,46 @@
 # See README.md regarding module outputs in terraform 0.12+
+# ==============================================================================
+#   Non-sensitive (readable by operators)
+# ==============================================================================
+
 output "resource_group_name" {
   description = "The name of the resource group"
   sensitive   = false
-  value       = module.resource_group.name
+  value       = azurerm_resource_group.main.name
 }
 
 output "public_ssh_key" {
   description = "The public ssh-key for connecting to nodes in the cluster"
   sensitive   = false
-  value       = module.ssh_keys.public_ssh_key
+  value       = var.ssh_public_key != "" ? var.ssh_public_key : tls_private_key.ssh[0].public_key_openssh
 }
 
-output "kube_config" {
-  description = "A kube_config block. When Role Based Access Control with Azure Active Directory is enabled, this is exported from kube_admin_config."
-  sensitive   = true
-  value       = local.aks_kube_config
-}
-
-output "log_analytics_solutions_id" {
-  description = "The id of the Log Analytics Solutions"
+output "application_id_server" {
+  description = "Application id of the application server"
   sensitive   = false
-  value       = var.log_analytics_enabled ? module.log_analytics_solution[0].id : ""
+  value       = azuread_application.server.application_id
 }
 
-output "log_analytics_workspace_id" {
-  description = "The id of the workspace created for Log Analytics"
+output "application_id_client" {
+  description = "Application id of the application client"
   sensitive   = false
-  value       = var.log_analytics_enabled ? module.log_analytics_workspace[0].id : null
+  value       = azuread_application.client.application_id
 }
 
-output "log_analytics_workspace_name" {
-  description = "The name of the workspace created for Log Analytics"
-  sensitive   = false
-  value       = var.log_analytics_enabled ? module.log_analytics_workspace[0].name : null
-}
+# ------------------------------------------------------------------------------
 
 output "info" {
   description = "Information about working with the cluster"
   sensitive   = false
-  value       = <<-EOH
+  value = <<-EOH
     # --
-    #  Initialized: ${var.initialized} (See README.md for more info)
+    #  See README.md for more info
     # --
     # To access kubectl on cluster as admin (e.g. to add rbac access manually):
-    $ az aks get-credentials --resource-group ${module.resource_group.name} --name ${var.prefix}-aks --admin
+    $ az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${azurerm_kubernetes_cluster.main.name} --admin
     # ---
     # To get an kubectl context on the cluster (first add permissions):
-    $ az aks get-credentials --resource-group ${module.resource_group.name} --name ${var.prefix}-aks
+    $ az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${azurerm_kubernetes_cluster.main.name}
     # ---
     # When first using the kubectl command, you will have to use the Azure device login once
     $ kubectl get nodes
@@ -59,13 +53,22 @@ output "info" {
   EOH
 }
 
-#output "credentials" {
-#  description = "Debugging authentication"
-#  sensitive   = false
-#  value       = <<-EOH
-#  Hostname: ${local.aks_host}
-#  Certificate: ${local.aks_certificate}
-#  Private Key: ${local.aks_key}
-#  CA Certificate: ${local.aks_ca_certificate}
-#  EOH
-#}
+# ==============================================================================
+#   Sensitive (for internal use by terraform)
+# ==============================================================================
+
+output "kube_config" {
+  description = "A kube_config block. When Role Based Access Control with Azure Active Directory is enabled, this is exported from kube_admin_config."
+  sensitive   = true
+  value       = azurerm_kubernetes_cluster.main.kube_config
+}
+
+output "kube_admin_config" {
+  description = "A kube_config block. When Role Based Access Control with Azure Active Directory is enabled, this is exported from kube_admin_config."
+  sensitive   = true
+  value       = azurerm_kubernetes_cluster.main.kube_admin_config
+}
+
+# ==============================================================================
+#   Debugging
+# ==============================================================================

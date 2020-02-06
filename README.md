@@ -8,8 +8,11 @@
 This module will deploy a managed AKS cluster in Azure.
 It takes ~10 minutes to provision from scratch.
 
-Please see the 'Sample Usage' before trying to deploy, as there is a manual step involved
-
+IMPORTANT: Please see the 'Sample Usage' before trying to deploy, as there is a manual step involved
+```bash
+# You need to run this & manually grant permissions in Azure BEFORE deploying! See description below
+terraform apply -auto-approve -target module.aks.module.aad.azuread_service_principal.server -target module.aks.module.aad.azuread_service_principal.client
+```
 #### Why not the official azurerm-module?
 The official module doesn't seem to be updated too often, and isn't as flexible as it should be
 
@@ -26,6 +29,12 @@ Please note that this is a work in progress, and any feedback & improvements are
 
 ## Providers
 ```hcl
+# Export your credentials for authentication
+# export ARM_SUBSCRIPTION_ID=xxxxxxxx
+# export ARM_CLIENT_ID=xxxxxxx
+# export ARM_CLIENT_SECRET=xxxxxxx
+# export ARM_TENANT_ID=xxxxxxxx
+#
 # See 'versions.tf'
 provider "azurerm"    { version = "~> 1.42" }
 provider "azuread"    { version = "~> 0.7"  }

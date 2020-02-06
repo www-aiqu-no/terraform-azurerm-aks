@@ -2,10 +2,10 @@
 #   Resource Group & helper functions
 # ==============================================================================
 
-# Create new resource group
-resource "azurerm_resource_group" "main" {
+# Lookup resource group (Issue #9: Not created in module due to submodule dependencies)
+data "azurerm_resource_group" "main" {
   name     = "${var.prefix}-${var.resource_group_name}"
-  location = var.location
+  #location = var.location
 }
 
 # Create random postfix string
@@ -14,10 +14,10 @@ resource "random_string" "postfix" {
   min_lower   = 2
   min_numeric = 2
   # --
-  lower       = true
-  number      = true
-  upper       = false
-  special     = false
+  lower   = true
+  number  = true
+  upper   = false
+  special = false
 }
 
 # ==============================================================================
@@ -26,7 +26,7 @@ resource "random_string" "postfix" {
 
 module "aks" {
   source              = "./modules/aks"
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = data.azurerm_resource_group.main.name
   # --
   prefix  = var.prefix
   # --
@@ -68,7 +68,7 @@ module "aad" {
 }
 
 # ==============================================================================
-#  Configure Networks
+#  Configure Advanced Networking
 # ==============================================================================
 
 #module "network" {
@@ -81,7 +81,7 @@ module "aad" {
 
 module "analytics" {
   source              = "./modules/analytics"
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = data.azurerm_resource_group.main.name
   # --
   prefix            = var.prefix
   postfix           = random_string.postfix.result

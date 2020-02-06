@@ -1,4 +1,13 @@
 # ==============================================================================
+#   REQUIRED
+# ==============================================================================
+
+variable "resource_group_name" {
+  description = "Name of the resource group in Azure to use with this module"
+  type        = string
+}
+
+# ==============================================================================
 #   OPTIONAL
 #   - This is where you customize your cluster deployment
 # ==============================================================================
@@ -6,11 +15,6 @@
 variable "prefix" {
   description = "Prefix for any resources created for this module"
   default     = "aks"
-}
-
-variable "resource_group_name" {
-  description = "Name of new resource group in Azure (prefix get added)"
-  default     = "resources"
 }
 
 # NOTE: $ az account list-locations --output table

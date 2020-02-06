@@ -20,11 +20,6 @@ resource "random_string" "prefix" {
   special = false
 }
 
-resource "azurerm_resource_group" "aks" {
-  name     = "AKS-Testing"
-  location = "eastus"
-}
-
 # ==============================================================================
 #   Deploy module (current)
 # ==============================================================================
@@ -32,8 +27,7 @@ resource "azurerm_resource_group" "aks" {
 module "cluster" {
   source = "../."
   # --
-  resource_group_name = azurerm_resource_group.aks.name
-  prefix              = random_string.prefix.result
+  prefix = random_string.prefix.result
 }
 
 # ==============================================================================

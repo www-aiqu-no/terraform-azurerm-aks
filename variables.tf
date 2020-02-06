@@ -2,19 +2,14 @@
 #   REQUIRED
 # ==============================================================================
 
-variable "resource_group_name" {
-  description = "Name of the resource group in Azure to use with this module"
-  type        = string
-}
-
 # ==============================================================================
 #   OPTIONAL
 #   - This is where you customize your cluster deployment
 # ==============================================================================
 
-variable "prefix" {
-  description = "Prefix for any resources created for this module"
-  default     = "aks"
+variable "resource_group_name" {
+  description = "Name of the resource group in Azure to use with this module"
+  default     = "AksDeployment"
 }
 
 # NOTE: $ az account list-locations --output table
@@ -22,6 +17,11 @@ variable "prefix" {
 variable "location" {
   description = "Datacenter location for this deployment. Use 'az account list-locations --output table' to get a full list"
   default     = "eastus"
+}
+
+variable "prefix" {
+  description = "Prefix for any resources created for this module"
+  default     = "aks"
 }
 
 # ------------------------------------------------------------------------------

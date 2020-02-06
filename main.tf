@@ -3,8 +3,9 @@
 # ==============================================================================
 
 # Lookup resource group (Issue #9: Not created in module due to submodule dependencies)
-data "azurerm_resource_group" "main" {
-  name = var.resource_group_name
+resource "azurerm_resource_group" "main" {
+  name     = var.resource_group_name
+  location = var.location
 }
 
 # Create random postfix string
@@ -25,7 +26,7 @@ resource "random_string" "postfix" {
 
 module "aks" {
   source              = "./modules/aks"
-  resource_group_name = data.azurerm_resource_group.main.name
+  resource_group_name = var.resource_group_name
   # --
   prefix  = var.prefix
   # --
@@ -80,7 +81,7 @@ module "aad" {
 
 module "analytics" {
   source              = "./modules/analytics"
-  resource_group_name = data.azurerm_resource_group.main.name
+  resource_group_name = var.resource_group_name
   # --
   prefix            = var.prefix
   postfix           = random_string.postfix.result

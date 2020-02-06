@@ -8,9 +8,10 @@ resource "azurerm_resource_group" "main" {
   location = var.location
 }
 
+# ------------------------------------------------------------------------------
+
 resource "azurerm_kubernetes_cluster" "main" {
-  #count = var.initialized ? 1 : 0 # Required due to manually granting permissions
-  name = "${var.prefix}-${var.kube_name}-${random_string.postfix.result}"
+  name = "${var.prefix}-${var.kube_name}"
   # --
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location

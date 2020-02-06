@@ -44,7 +44,7 @@ variable "ssh_public_key" {
 
 # NOTE: The dns_prefix must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number.
 variable "dns_prefix" {
-  description = "DNS prefix (required to be unique)"
+  description = "DNS prefix (required to be unique). Must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number."
   default     = "AksDns"
 }
 

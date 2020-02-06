@@ -33,7 +33,7 @@ module "aks_test" {
 }
 
 # ==============================================================================
-#   Outputs from module needs to be exported
+#   Outputs from module needs to be exported if you want to see them
 # ==============================================================================
 
 # NOTE: To print output from modules, you need to export it in root:
@@ -46,18 +46,34 @@ output "kube_public_ssh_key" {
 }
 
 # ==============================================================================
-#   Check Connection
+#   Check Connection / use credentials for configuring the deployed cluster
 # ==============================================================================
 
-provider "kubernetes" {
-  host                   = cluster.kube_host
-  client_certificate     = base64decode(module.cluster.kube_client_certificate)
-  client_key             = base64decode(module.cluster.kube_client_key)
-  cluster_ca_certificate = base64decode(module.cluster.kube_cluster_ca_certificate)
+# Set values; just for readability
+locals {
+  # Retrieve (sensitive) values from the aks-module
+  host                   = module.cluster.kube_admin_config[0].host
+  username               = module.cluster.kube_admin_config[0].username
+  password               = module.cluster.kube_admin_config[0].password
+  client_certificate     = base64decode(module.cluster.kube_admin_config[0].client_certificate)
+  client_key             = base64decode(module.cluster.kube_admin_config[0].client_key)
+  cluster_ca_certificate = base64decode(module.cluster.kube_admin_config[0].cluster_ca_certificate)
+
+  # Set other values
+  kube_dashboard_as_admin = true
 }
 
+# Use credentials for connecting to the cluster
+provider "kubernetes" {
+  host                   = local.host
+  client_certificate     = local.client_certificate
+  client_key             = local.client_key
+  cluster_ca_certificate = local.cluster_ca_certificate
+}
+
+# Allow dashboard user to manage all resources (potentially insecure!)
 resource "kubernetes_cluster_role_binding" "dashboard_cluster_admin" {
-  count = var.initialized ? 1 : 0
+  count = local.kube_dashboard_as_admin ? 1 : 0
 
   metadata {
     name = "dashboard-cluster-admin"
@@ -74,6 +90,6 @@ resource "kubernetes_cluster_role_binding" "dashboard_cluster_admin" {
   subject {
     kind      = "ServiceAccount"
     name      = "kubernetes-dashboard" # pre-defined
-    namespace = "kube-system"
+    namespace = "kube-system" # v1 dashboard
   }
 }

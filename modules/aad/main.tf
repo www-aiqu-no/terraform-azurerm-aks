@@ -4,7 +4,7 @@
 
 # Server application
 resource "azuread_application" "server" {
-  name = "${var.prefix}-Server"
+  name = "${var.prefix}-AAD"
 
   type                    = "webapp/api"
   reply_urls              = ["https://www.kred.no"]
@@ -47,7 +47,7 @@ resource "azuread_application" "server" {
 
 # RBAC endpoint
 resource "azuread_application" "client" {
-  name = "${var.prefix}-Auth"
+  name = "${var.prefix}-CLI"
 
   reply_urls = ["https://www.kred.no"]
   type       = "native"

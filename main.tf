@@ -26,14 +26,16 @@ resource "random_string" "postfix" {
 
 module "aks" {
   source              = "./modules/aks"
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
   # --
   prefix  = var.prefix
   # --
-  kube_name       = var.kube_name
-  kube_version    = var.kube_version
-  kube_dns_prefix = var.kube_dns_prefix != "" ? var.kube_dns_prefix : "dns-${random_string.postfix.result}"
-  kube_tags       = var.kube_tags
+  kube_name              = var.kube_name
+  kube_version           = var.kube_version
+  kube_dashboard_enabled = var.kube_dashboard_enabled
+  kube_dns_prefix        = var.kube_dns_prefix != "" ? var.kube_dns_prefix : "dns-${random_string.postfix.result}"
+  kube_tags              = var.kube_tags
   # --
   pool_name         = var.pool_name
   pool_vm_type      = var.pool_vm_type
@@ -81,7 +83,8 @@ module "aad" {
 
 module "analytics" {
   source              = "./modules/analytics"
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
   # --
   prefix            = var.prefix
   postfix           = random_string.postfix.result

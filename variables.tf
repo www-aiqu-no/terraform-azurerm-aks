@@ -36,6 +36,11 @@ variable "kube_version" {
   default     = "1.15.7"
 }
 
+variable "kube_dashboard_enabled" {
+  description = "Enable the dashboard"
+  default     = true
+}
+
 # NOTE: The dns_prefix must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number.
 variable "kube_dns_prefix" {
   description = "DNS prefix (required to be unique). Must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number."

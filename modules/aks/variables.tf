@@ -2,10 +2,12 @@
 #   FROM PARENT MODULE
 # ==============================================================================
 variable "resource_group_name" {}
+variable "location" {}
 variable "prefix" {}
 # --
 variable "kube_name" {}
 variable "kube_version" {}
+variable "kube_dashboard_enabled" {}
 variable "kube_dns_prefix" {}
 variable "kube_tags" {}
 # --
@@ -28,3 +30,6 @@ variable "server_secret" {}
 # --
 variable "log_analytics_enabled" {}
 variable "log_analytics_workspace_id" {}
+# --
+# Workaround for etl depends_on in modules
+variable "depends_on_external" { default = [""] }

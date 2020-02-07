@@ -2,9 +2,10 @@
 #   Access information from parent resources
 # ==============================================================================
 
-data "azurerm_resource_group" "parent" {
-  name = var.resource_group_name
-}
+# NOT WORKING
+#data "azurerm_resource_group" "parent" {
+#  name = var.resource_group_name
+#}
 
 # ==============================================================================
 #   Create AKS Cluster
@@ -13,8 +14,8 @@ data "azurerm_resource_group" "parent" {
 resource "azurerm_kubernetes_cluster" "main" {
   name = "${var.prefix}-${var.kube_name}"
   # --
-  resource_group_name = data.azurerm_resource_group.parent.name
-  location            = data.azurerm_resource_group.parent.location
+  resource_group_name = var.resource_group_name
+  location            = var.location
   # --
   dns_prefix         = var.kube_dns_prefix
   kubernetes_version = var.kube_version
@@ -70,7 +71,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   addon_profile {
     # See https://docs.microsoft.com/en-us/azure-stack/user/azure-stack-solution-template-kubernetes-dashboard?view=azs-1910
     kube_dashboard {
-      enabled = true
+      enabled = var.kube_dashboard_enabled
     }
 
     oms_agent {

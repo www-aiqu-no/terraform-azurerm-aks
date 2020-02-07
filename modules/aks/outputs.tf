@@ -26,6 +26,7 @@ output "info" {
 #   Sensitive (for internal use by terraform)
 # ==============================================================================
 
+# INFO: Not used when RBAC is enabled
 output "kube_config" {
   description = "A kube_config block. When Role Based Access Control with Azure Active Directory is enabled, this is exported from kube_admin_config."
   sensitive   = true

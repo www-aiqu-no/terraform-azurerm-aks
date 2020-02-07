@@ -2,9 +2,14 @@
 #   Create AAD Applications
 # ==============================================================================
 
-# Server application
+# AKS application
+resource "azuread_application" "aks" {
+  name = "${var.prefix}-aks"
+}
+
+# Azure AD lookup
 resource "azuread_application" "server" {
-  name = "${var.prefix}-AAD"
+  name = "${var.prefix}-aad"
 
   type                    = "webapp/api"
   reply_urls              = ["https://www.kred.no"]
@@ -47,7 +52,7 @@ resource "azuread_application" "server" {
 
 # RBAC endpoint
 resource "azuread_application" "client" {
-  name = "${var.prefix}-CLI"
+  name = "${var.prefix}-cli"
 
   reply_urls = ["https://www.kred.no"]
   type       = "native"
@@ -79,6 +84,10 @@ resource "azuread_application" "client" {
 #   Create permission groups ("Service Principals")
 # ==============================================================================
 
+resource "azuread_service_principal" "aks" {
+  application_id = azuread_application.aks.application_id
+}
+
 resource "azuread_service_principal" "server" {
   application_id = azuread_application.server.application_id
 }
@@ -90,6 +99,15 @@ resource "azuread_service_principal" "client" {
 # ==============================================================================
 #   Create credentials ("Service Principal Passwords")
 # ==============================================================================
+
+resource "azuread_service_principal_password" "aks" {
+  service_principal_id = azuread_service_principal.aks.id
+  value                = random_string.aks_password.result
+  end_date             = timeadd(timestamp(), "876000h") # 100 years
+  lifecycle {
+    ignore_changes = [end_date]
+  }
+}
 
 resource "azuread_service_principal_password" "server" {
   service_principal_id = azuread_service_principal.server.id
@@ -112,6 +130,14 @@ resource "azuread_service_principal_password" "client" {
 # ==============================================================================
 #   Create random passwords for use in credentials
 # ==============================================================================
+
+resource "random_string" "aks_password" {
+  length  = 16
+  special = true
+  keepers = {
+    service_principal = azuread_service_principal.aks.id
+  }
+}
 
 resource "random_string" "server_password" {
   length  = 16

@@ -53,8 +53,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   service_principal {
-    client_id     = var.client_id # is this correct?
-    client_secret = var.client_secret
+    client_id     = var.aks_id #var.client_id # is this correct?
+    client_secret = var.aks_secret #var.client_secret
   }
 
   role_based_access_control {
@@ -62,8 +62,8 @@ resource "azurerm_kubernetes_cluster" "main" {
 
     # Pre-Generated credentials
     azure_active_directory {
-      client_app_id     = var.client_id
-      server_app_id     = var.server_id
+      client_app_id     = var.client_id # Accept RBAC clients
+      server_app_id     = var.server_id # Azure AD lookup
       server_app_secret = var.server_secret
     }
   }

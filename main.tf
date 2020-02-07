@@ -2,12 +2,6 @@
 #   Resource Group & helper functions
 # ==============================================================================
 
-# Lookup resource group (Issue #9: Not created in module due to submodule dependencies)
-resource "azurerm_resource_group" "main" {
-  name     = var.resource_group_name
-  location = var.location
-}
-
 # Create random postfix string
 resource "random_string" "postfix" {
   length      = 5
@@ -21,13 +15,35 @@ resource "random_string" "postfix" {
 }
 
 # ==============================================================================
+#  Create/validate resource-group
+# ==============================================================================
+
+# Lookup resource group (Issue #9: Not created in module due to submodule dependencies)
+#resource "azurerm_resource_group" "main" {
+#  name     = var.resource_group_name
+#  location = var.location
+#}
+
+# Outputs:
+#   - name, location
+module "resource_group" {
+  source  = "./modules/rg"
+  enabled = var.resource_group_create
+  # --
+  name     = var.resource_group_name
+  location = var.location
+}
+
+# ==============================================================================
 #  Deploy AKS Cluster
 # ==============================================================================
 
+# Outputs:
+#   - info, kube_config, kube_admin_config
 module "aks" {
   source              = "./modules/aks"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  resource_group_name = module.resource_group.name #azurerm_resource_group.main.name
+  location            = module.resource_group.location #azurerm_resource_group.main.location
   # --
   prefix  = var.prefix
   # --
@@ -50,6 +66,8 @@ module "aks" {
   admin_user     = var.admin_user
   ssh_public_key = module.ssh.ssh_public_key
   # --
+  aks_id        = module.aad.aks_id
+  aks_secret    = module.aad.aks_secret
   client_id     = module.aad.client_id
   client_secret = module.aad.client_secret
   server_id     = module.aad.server_id
@@ -63,6 +81,8 @@ module "aks" {
 #  Configure Azure AD integration (RBAC)
 # ==============================================================================
 
+# Outputs:
+#   - server_id, client_id, server_secret, client_secret
 module "aad" {
   source = "./modules/aad"
   # --
@@ -81,10 +101,12 @@ module "aad" {
 #  OPTIONAL: Log Analytics Solution (log_analytics_enabled = true)
 # ==============================================================================
 
+# Outputs:
+#   - workspace_id
 module "analytics" {
   source              = "./modules/analytics"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  resource_group_name = module.resource_group.name #azurerm_resource_group.main.name
+  location            = module.resource_group.location #azurerm_resource_group.main.location
   # --
   prefix            = var.prefix
   postfix           = random_string.postfix.result
@@ -97,6 +119,8 @@ module "analytics" {
 #   Generate private/public keys, if public key is not provided
 # ==============================================================================
 
+# Outputs:
+#   - ssh_public_key
 module "ssh" {
   source  = "./modules/ssh"
   # --

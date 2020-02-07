@@ -7,14 +7,19 @@
 #   - This is where you customize your cluster deployment
 # ==============================================================================
 
+variable "resource_group_create" {
+  description = "Set to 'false' if you want to use an existing resource group"
+  default     = true
+}
+
 variable "resource_group_name" {
-  description = "Name of the resource group in Azure to use with this module"
+  description = "Name of the resource group in Azure to create/use with this module"
   default     = "AksDeployment"
 }
 
-# NOTE: $ az account list-locations --output table
-# Examples: norwaywest, norwayeast, ..
 variable "location" {
+  # $ az account list-locations --output table
+  # Examples: norwaywest, norwayeast, ..
   description = "Datacenter location for this deployment. Use 'az account list-locations --output table' to get a full list"
   default     = "eastus"
 }
@@ -41,8 +46,8 @@ variable "kube_dashboard_enabled" {
   default     = true
 }
 
-# NOTE: The dns_prefix must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number.
 variable "kube_dns_prefix" {
+  # NOTE: The dns_prefix must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number.
   description = "DNS prefix (required to be unique). Must contain between 3 and 45 characters, and can contain only letters, numbers, and hyphens. It must start with a letter and must end with a letter or a number."
   default     = ""
 }
@@ -82,9 +87,9 @@ variable "pool_vm_size" {
   default     = "Standard_DS2_v2"
 }
 
-# NOTE: Minimum size is 30
 variable "pool_vm_disk_size" {
-  description = "Size of disk on VMs in the default node pool"
+  # NOTE: Minimum size is 30
+  description = "Size of disk on VMs in the default node pool. Minimum size is 30"
   default     = 30
 }
 

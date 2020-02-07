@@ -1,5 +1,7 @@
 # v0.1.3 (Unreleased)
 #### NOTES
+- Modified creating of resource. [[Issue #9](https://github.com/www-aiqu-no/terraform-azurerm-aks/issues/9)]
+- Added extra SP for cluster itself
 - Split everything into sub-modules again (Sigh!)
 
 # v0.1.2 (February 06, 2020)

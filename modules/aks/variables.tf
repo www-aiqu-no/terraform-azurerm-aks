@@ -23,6 +23,8 @@ variable "pool_auto_scaling_min" {}
 variable "admin_user" {}
 variable "ssh_public_key" {}
 # --
+variable "aks_id" {}
+variable "aks_secret" {}
 variable "client_id" {}
 variable "client_secret" {}
 variable "server_id" {}
